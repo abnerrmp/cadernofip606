@@ -1,0 +1,102 @@
+---
+title: "caderno_fip606"
+---
+
+# Introdução ao Curso e à Pesquisa Reprodutível com R
+
+A disciplina **FIP606** teve como foco central capacitar os estudantes de pós-graduação a **analisar e visualizar dados científicos** em Fitopatologia, com apoio nas ferramentas da linguagem R. Trata-se de uma disciplina de 60 horas, orientada pelo professor Emerson M. Del Ponte (UFV), voltada a integrar conceitos estatísticos e computacionais aplicados à pesquisa em proteção de plantas.
+
+### Objetivos do Curso
+
+Os objetivos principais estão divididos em dois grandes eixos:
+
+-   **Objetivo 1:** Compreender os fundamentos da **visualização e análise de dados**, incluindo estatística descritiva e inferencial;
+
+-   **Objetivo 2:** Aprender os conceitos básicos da linguagem **R**, utilizando códigos abertos da comunidade para análises estatísticas reprodutíveis.
+
+O curso propõe resultados claros ao final:
+
+-   Explorar dados;
+
+-   Visualizar resultados de forma eficiente;
+
+-   Ajustar modelos estatísticos;
+
+-   Comunicar descobertas de forma clara e transparente.
+
+### Fluxo da Pesquisa Científica
+
+A estrutura geral de uma investigação segue as seguintes etapas:
+
+1.  **Ideia / Hipótese**
+
+2.  **Coleta de dados (experimento ou observação)**
+
+3.  **Análise**
+
+4.  **Conclusões**
+
+5.  **Conhecimento**
+
+### Abordagens de Pesquisa
+
+Durante o curso foram apresentadas três formas principais de abordagem de dados:
+
+-   **Censo:** Avalia todos os indivíduos da população;
+
+-   **Amostragem:** Avalia parte da população com base em plano amostral;
+
+-   **Experimentos:** Manipula propositalmente uma variável independente para observar seu efeito sobre uma variável dependente.
+
+    <div>
+
+    > 💡 **Comentário:** Esse aspecto é essencial na fitopatologia, onde com frequência trabalhamos com ensaios de campo (experimentais) e levantamentos (observacionais).
+
+    </div>
+
+### Estatística Descritiva x Inferencial
+
+-   **Descritiva:** Resume os dados por meio de médias, desvios, gráficos e tabelas. Representa o **primeiro passo** da análise.
+
+-   **Inferencial:** Aplica modelos estatísticos para fazer generalizações, comparar grupos ou identificar efeitos.
+
+    ## Reprodutibilidade
+
+### Problemas com Fluxos Não Reprodutíveis
+
+Devemos sempre preferir fazer pesquisas reprodutíveis, alguns problemas que podem levar a uma falta de reprodutibilidade estão relacionados a:
+
+-   Uso de múltiplos programas para etapas distintas (Ex: Excel, SPSS, GraphPad, etc.);
+
+-   Falta de padronização nos arquivos e nos nomes de variáveis;
+
+-   Ausência de documentação clara;
+
+-   Dificuldade em replicar a análise por outros pesquisadores.
+
+### O Conceito de Pesquisa Reprodutível
+
+> *“O produto final da pesquisa não é apenas o artigo científico, mas todo o ambiente computacional usado para gerar os resultados.”*\
+> — Yihui Xie, 2014
+
+A proposta é que os dados, códigos e procedimentos estejam **disponíveis, documentados e organizados**, permitindo que outros pesquisadores (ou o próprio autor no futuro) consigam **reproduzir os resultados** com exatidão.
+
+#### Ferramentas Recomendadas
+
+-   **R + RStudio + RMarkdown**: permitem consolidar código, resultados e texto num mesmo documento.
+
+-   **GitHub**: plataforma de versionamento e compartilhamento de código.
+
+    -   **knitr**: pacote do R usado para gerar documentos dinâmicos (PDF, HTML, Word).
+
+### Perfil do Pesquisador Reprodutível
+
+Resumindo, um bom pesquisador reprodutível é:
+
+-   Organizado e sistemático;
+
+-   Documenta todas as etapas do trabalho;
+
+-   Valoriza o compartilhamento;
+
+-   Considera o trabalho como **colaborativo**.

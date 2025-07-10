@@ -1,0 +1,190 @@
+---
+title: "anova_dbc_parcelas_sub"
+---
+
+```{r}
+# Pacotes necessários para o script completo
+library(gsheet)       # Para importar dados do Google Sheets
+library(Hmisc)        # Para stat_summary e manipulação de dados
+library(ggplot2)      # Para visualizações
+library(lme4)         # Para modelos lineares mistos (lmer)
+library(DHARMa)       # Para diagnóstico de modelos mistos
+library(emmeans)      # Para estimativas de médias marginais (EMMs)
+library(multcomp)     # Para comparação múltipla com letras (cld)
+library(car)          # Para Anova tipo II/III e utilidades adicionais
+```
+
+# **ANOVA - DBC**
+
+O **Delineamento em Blocos Casualizados (DBC)** é utilizado quando há uma variação ambiental conhecida que pode interferir nos resultados do experimento. Ele incorpora os **três princípios da experimentação**:
+
+-   **Repetição**;
+
+-   **Casualização**;
+
+-   **Controle local**.
+
+Neste caso, os tratamentos são aleatoriamente atribuídos dentro de cada bloco, o que permite controlar a variação não desejada (ex: diferenças de solo, luminosidade ou umidade no campo experimental).
+
+### Importação de dados
+
+A importação de dados é feita diretamente de uma planilha do Google Sheets usando a função `gsheet2tbl()`. Essa abordagem é útil porque permite manter os dados atualizados automaticamente.
+
+```{r}
+library(gsheet)
+campo <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=866852711#gid=866852711")
+```
+
+### Transformação de dados
+
+Antes das análises, as variáveis categóricas são convertidas para o tipo **fator**, o que é essencial para que sejam tratadas corretamente nos modelos.
+
+```{r}
+
+library(Hmisc)
+campo$TRAT <- factor(campo$TRAT)
+campo$BLOCO <- factor(campo$BLOCO)
+```
+
+### Visualização exploratória
+
+Gráfico de dispersão por tratamento, com média e intervalo de confiança em vermelho.
+
+```{r}
+  campo |>
+    ggplot(aes(TRAT, PROD)) +
+    geom_jitter(width = 0.1) +
+    stat_summary(
+    fun.data = "mean_cl_boot",
+    colour = "red", size = 0.3
+  )
+```
+
+### Análise de variância (ANOVA) com efeito de bloco
+
+É utilizado um modelo linear misto (`lmer`) com **TRAT** como efeito fixo e **BLOCO** como efeito aleatório.
+
+```{r}
+library(lme4)
+m_campo <- lmer(PROD ~ TRAT + (1|BLOCO), data = campo)
+anova(m_campo)
+```
+
+### Diagnóstico do modelo
+
+Avaliação dos resíduos simulados, fundamental para validar as suposições da ANOVA (normalidade e homocedasticidade).
+
+```{r}
+library(DHARMa)
+plot(simulateResiduals(fittedModel = m_campo))
+```
+
+### Estimativa de médias ajustadas e comparação múltipla
+
+As médias ajustadas (EMMs) são estimadas para os tratamentos, seguidas de comparação de grupos usando letras diferentes (cld).
+
+```{r}
+means_campo <- emmeans(m_campo, ~TRAT)
+means_campo
+plot(means_campo)
+library(multcomp)
+cld(means_campo)
+pwpp(means_campo)
+```
+
+# ANOVA - Parcelas Subdivididas
+
+O delineamento em parcelas subdivididas é usado quando se deseja estudar **dois fatores**, mas um deles exige maior parcela experimental. Neste caso, o **fator principal** é o híbrido e o **fator secundário** é o método. O uso de blocos e a subdivisão permitem maior controle experimental e economia de recursos.
+
+### Importação dos dados
+
+```{r}
+milho <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=1345524759#gid=1345524759")
+```
+
+### Visualização exploratória
+
+```{r}
+milho |> 
+  ggplot(aes(hybrid, index, color = method)) +
+  geom_jitter(width = 0.1)+
+  coord_flip() +
+  facet_wrap(~method)
+```
+
+### Criação de fator de subparcela
+
+A interação entre `hybrid` e `block` representa as **subparcelas** dentro de cada parcela principal.
+
+```{r}
+milho$hybrid_block <- interaction(milho$hybrid,milho$block)
+#ou
+#milho |> 
+ # mutate(hybrid_bock = interaction(hybrid,block))
+```
+
+### Modelo linear misto para parcelas subdivididas
+
+A análise considera a interação entre híbrido e método como efeitos fixos, e os blocos aninhados como efeito aleatório.
+
+```{r}
+library(lme4)
+m_milho <- lmer(index ~ hybrid*method + 
+                  (1 | block:hybrid_block),
+                data = milho)
+car::Anova(m_milho)
+```
+
+### Diagnóstico do modelo
+
+```{r}
+plot(simulateResiduals(m_milho))
+```
+
+### Médias ajustadas por híbrido dentro de cada método
+
+```{r}
+media_milho <- emmeans(m_milho, ~ hybrid | method)
+media_milho
+```
+
+## Correlação entre Yield e Index
+
+Neste estudo, foi investigada a relação entre o índice `index` e a produtividade `yield` de plantas de milho. Para isso, utilizou-se um gráfico de dispersão com uma reta de regressão linear, gerado com a função `ggplot`. A dispersão dos pontos foi suavizada com `geom_jitter()` para evitar sobreposição, e a tendência entre as variáveis foi representada por uma linha ajustada via `geom_smooth(method = "lm")`, que aplica um modelo linear simples.
+
+```{r}
+milho |> ggplot(aes(index, yield)) + 
+  geom_jitter() +
+  geom_smooth(method = "lm")
+
+
+#correlação
+cor1 <- cor(milho$index, milho$yield)
+cor1*cor1*100
+cor.test(milho$index, milho$yield)
+
+```
+
+O gráfico resultante indica uma tendência negativa: à medida que os valores do índice aumentam, a produtividade tende a diminuir. Essa tendência é expressa pela inclinação negativa da reta azul, e a área sombreada ao redor dela representa o intervalo de confiança do modelo de regressão linear, evidenciando a incerteza associada à estimativa da média.
+
+Para quantificar essa relação, foi calculado o coeficiente de correlação de Pearson entre as duas variáveis. O valor obtido foi de aproximadamente -0,25, indicando uma correlação fraca e negativa entre o índice e a produtividade. Em outras palavras, embora exista uma tendência de redução da produtividade com o aumento do índice, essa relação não é forte. O coeficiente de determinação associado (R²) foi de apenas 6,32%, o que significa que apenas cerca de 6% da variação observada na produtividade pode ser explicada pela variação no índice. O restante se deve a outros fatores não considerados neste modelo.
+
+Adicionalmente, foi realizado o teste estatístico de correlação de Pearson. O valor de p obtido foi de 0,084, o que não é estatisticamente significativo ao nível de 5% (p \> 0,05). Isso significa que não há evidências suficientes para rejeitar a hipótese nula de que não existe correlação entre as variáveis. O intervalo de confiança para a correlação (de -0,50 a 0,035) inclui o valor zero, reforçando essa conclusão.
+
+Portanto, embora o gráfico sugira uma leve tendência decrescente entre o índice e a produtividade, os resultados estatísticos indicam que essa associação é fraca e não significativa. É provável que outros fatores estejam influenciando a produtividade de maneira mais relevante do que o índice analisado.
+
+```{r}
+summary(milho)
+
+```
+
+### Comparações múltiplas com letras (Teste de Tukey)
+
+Após a ANOVA e a obtenção das médias ajustadas com `emmeans`, é possível realizar um teste de comparações múltiplas para verificar **quais tratamentos diferem estatisticamente entre si**. Utiliza-se a função `cld()` do pacote `multcomp`, que adiciona **letras indicando grupos estatisticamente diferentes** com base em um teste como o de Tukey. Esse tipo de análise é comum em experimentos com múltiplos tratamentos, como nos delineamentos em parcelas subdivididas.
+
+Médias com letras **iguais** pertencem ao **mesmo grupo estatístico** (ou seja, **não diferem significativamente**). Médias com **letras diferentes** pertencem a **grupos distintos** e são **estatisticamente diferentes** ao nível de significância adotado (geralmente 5%).
+
+```{r}
+cld_milho <- cld(media_milho, Letters = letters, adjust = "tukey")
+cld_milho
+```

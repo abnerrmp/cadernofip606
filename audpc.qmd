@@ -1,0 +1,83 @@
+---
+title: "audpc"
+---
+
+```{r}
+library(epifitter)     # Para AUDPC(), cv.model(), e o dataset PowderyMildew
+library(ggplot2)       # Para visualizações com ggplot
+library(dplyr)         # Para filter(), group_by(), summarise(), pipe (%>%) ou |>
+library(DHARMa)        # Para simulate_residuals()
+library(emmeans)       # Para emmeans() e cld()
+library(multcomp)
+```
+
+# AUDPC
+
+Esse script em R realiza uma análise da severidade de oídio (um tipo de doença fúngica) em diferentes sistemas de irrigação e níveis de umidade, usando gráficos, cálculo da área abaixo da curva de progresso da doença (AUDPC), ANOVA e comparação de médias. Abaixo está a **interpretação detalhada e explicativa** de cada etapa e da tabela final:
+
+```{r}
+library(epifitter)
+
+oidio <- PowderyMildew
+#Vários tipos de gráficos
+
+
+oidio |>
+  ggplot(aes(factor (time), sev)) +
+  geom_jitter(width=0.1) +
+  facet_wrap(irrigation_type ~ moisture)
+
+oidio |>
+  ggplot(aes(factor (time), sev)) +
+  geom_jitter(width=0.1) +
+  facet_grid(moisture ~ irrigation_type)
+
+oidio2 <- oidio|>
+  filter(irrigation_type %in% c("MS", "MS above canopy", "Overhead")) 
+oidio2 |> ggplot(aes(time, sev)) +
+  geom_point() +
+  facet_grid(moisture ~ irrigation_type)
+
+#Calcular média abaixo da curva
+
+oidio3 <- oidio2 |> 
+  group_by(irrigation_type, moisture, block) |> 
+  summarise(AUDPC = AUDPC(time, sev))
+
+#Plotar área abaixo da curva
+
+oidio3 |> 
+  ggplot(aes(irrigation_type, AUDPC, color = moisture)) +
+  geom_point(size = 2) + 
+  scale_y_continuous(limits = c(0,20))
+
+#Verificar se há diverenças
+#Fazer ANOVA
+
+oidio4 <- lm(AUDPC ~ irrigation_type*moisture, data = oidio3)
+anova(oidio4)
+
+
+plot(simulateResiduals(oidio4))
+
+#Ver visualmente se é diferente
+medias_oidio <- emmeans(oidio4, ~ moisture | irrigation_type)
+cld(medias_oidio)
+
+medias_oidio2 <- emmeans(oidio4, ~ irrigation_type | moisture)
+cld(medias_oidio2)
+
+residuosoidio4 <- residuals(oidio4)
+sd_res <- sd(residuosoidio4)
+media_fitted <- mean(fitted(oidio4))
+cv <- (sd_res / media_fitted) * 100
+print(cv)
+```
+
+|            | H moisture | M moisture |
+|------------|------------|------------|
+| Irrigation |            |            |
+| MS         | 8,52 Aa    | 11,18 Ab   |
+| MS AC      | 3,99 Ba    | 4,86 Bb    |
+| Overhead   | 3,68 Ba    | 3,81 Ca    |
+| CV = 5,39  |            |            |

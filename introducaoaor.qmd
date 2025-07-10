@@ -1,0 +1,141 @@
+---
+title: "introducaoaor"
+---
+
+# O que é o R?
+
+O R é uma **linguagem de programação** voltada para **análise, visualização e manipulação de dados**. Foi criado por Ross Ihaka e Robert Gentleman na Nova Zelândia.
+
+Algumas vantagens do R: - É **gratuito e de código aberto**; - Funciona em Windows, Mac e Linux; - Tem uma **grande comunidade** que cria pacotes e dá suporte online; - Pode gerar **gráficos, relatórios e análises reprodutíveis**.
+
+# RStudio
+
+O **RStudio** é um programa que facilita o uso do R. Ele tem uma interface com vários painéis que ajudam a: - Escrever e rodar códigos; - Ver variáveis e gráficos; - Acessar arquivos e ajuda.
+
+![](Captura%20de%20tela%202025-07-10%20114038.png)
+
+# Como instalar
+
+Você precisa instalar o R **antes** de instalar o RStudio.
+
+-   Baixe o R em: <https://cran.r-project.org>
+-   Baixe o RStudio em: <https://posit.co/download/rstudio-desktop>
+
+# Começando no RStudio
+
+## R Project
+
+Criar um **projeto (R Project)** ajuda a organizar arquivos, códigos e dados. Vá em:
+
+```         
+File > New Project > New Directory
+```
+
+Escolha uma pasta e dê um nome ao projeto.
+
+## Tipos de arquivos
+
+-   **R Script**: só códigos.
+-   **R Markdown**: código + texto.
+-   **Quarto Document**: mais moderno, com mais recursos.
+
+Recomendamos usar **Quarto**, pois é mais completo.
+
+# Como usar o Quarto
+
+Para criar um novo Quarto, vá em:
+
+```         
+File > New File > Quarto Document
+```
+
+Escolha o título e o tipo de saída (HTML, PDF ou Word).
+
+## Chunk
+
+Para rodar códigos no Quarto, eles devem estar dentro de um **chunk**.
+
+Para criar um chunk: `Ctrl + Alt + I`
+
+```{r}
+# Isto é um chunk
+x <- 10
+x
+```
+
+# Texto e formatação
+
+-   *Itálico*: `*palavra*`
+-   **Negrito**: `**palavra**`
+-   Título: `#`, Subtítulo: `##` ou `###`
+
+# Conceitos básicos do R
+
+## Atribuição de valores
+
+No R, podemos **salvar** resultados em nomes (variáveis) usando `<-`.
+
+```{r}
+x <- 10    # atribui o valor 10 ao objeto x
+y <- x * 10
+z <- x * y
+```
+
+## Vetores
+
+Um **vetor** é uma coleção de valores do **mesmo tipo**, como números ou texto, organizados em sequência. É a estrutura de dados mais simples do R.
+
+-   Criar um vetor de números de 1 a 10:
+
+```{r}
+A <- c(1:10)
+```
+
+-   Criar um vetor de palavras:
+
+```{r}
+nomes <- c("Ana", "Bruno", "Carla")
+```
+
+## Data Frame
+
+Um **data frame** é como uma **tabela** ou planilha, onde cada coluna pode ter um tipo diferente de dado (números, texto, fatores).
+
+-   Criar um data frame com dois vetores:
+
+```{r}
+A <- c(1:10)
+B <- c(11:20)
+df <- data.frame(A, B)
+```
+
+## Pipe
+
+O **pipe** (`|>` ou `%>%`) permite **encadear** operações, passando o resultado de uma função para a próxima.
+
+```{r}
+# Exemplo usando conjunto padrão 'cars'
+df2 <- cars
+# adiciona uma nova coluna
+ df2$dist2 <- c(1:50)
+
+library(tidyverse)
+# filtra, cria coluna e seleciona coluna 'speed'
+df2 |> 
+  mutate(dist3 = dist2 + 1) |> 
+  select(speed)
+```
+
+# Renderização
+
+Para transformar seu Quarto em **HTML**, **PDF** ou **Word**, clique em **Render** no botão superior do RStudio.
+
+# Quer aprender mais?
+
+É **muito importante** estudar por bons materiais! Recomendamos fortemente a leitura desses livros e sites:
+
+-   📘 **R for Data Science** – <https://r4ds.hadley.nz>\
+-   📗 **The Art of Data Science** – <https://bookdown.org/rdpeng/artofdatascience/>\
+-   📙 **An Introduction to R** – <https://cran.r-project.org/manuals.html>
+
+*Bons estudos e boas análises com R!*

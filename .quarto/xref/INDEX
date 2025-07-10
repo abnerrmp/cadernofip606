@@ -1,0 +1,47 @@
+{
+  "index.qmd": {
+    "index.html": "f7d63db4"
+  },
+  "about.qmd": {
+    "about.html": "27bb7f8d"
+  },
+  "analise.qmd": {
+    "analise.html": "d571932d"
+  },
+  "analises_estatisticas.qmd": {
+    "analises_estatisticas.html": "ff974d56"
+  },
+  "anova_dbc_parcelas_sub.qmd": {
+    "anova_dbc_parcelas_sub.html": "fe2a4454"
+  },
+  "apresentacao.qmd": {
+    "apresentacao.html": "efebcd30"
+  },
+  "audpc.qmd": {
+    "audpc.html": "fe797ceb"
+  },
+  "carregar_dados.qmd": {
+    "carregar_dados.html": "77c8a6ec"
+  },
+  "index2.qmd": {
+    "index2.html": "f1b8a940"
+  },
+  "introducaoaor.qmd": {
+    "introducaoaor.html": "bc47bcbe"
+  },
+  "mapa.qmd": {
+    "mapa.html": "79b3349a"
+  },
+  "obtencao_dados.qmd": {
+    "obtencao_dados.html": "0d954ce8"
+  },
+  "regressao.qmd": {
+    "regressao.html": "4affa944"
+  },
+  "testes_de_comparação_entre_dois_grupos_testet_teste_de_wilcoxon_pareado.qmd": {
+    "testes_de_comparação_entre_dois_grupos_testet_teste_de_wilcoxon_pareado.html": "8cf016a2"
+  },
+  "testes_de_comparação_multiplos_anova.qmd": {
+    "testes_de_comparação_multiplos_anova.html": "d334778e"
+  }
+}

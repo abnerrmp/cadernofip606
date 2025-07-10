@@ -1,0 +1,272 @@
+---
+title: "regressao"
+---
+
+```{r}
+library(gsheet)        # Importa planilhas do Google Sheets
+library(ggplot2)       # Gráficos
+library(tidyverse)     # Manipulação de dados (dplyr, tidyr etc.)
+library(lme4)          # Modelos lineares mistos
+library(car)           # Função Anova para modelos mistos
+library(drc)           # Ajuste de modelos dose-resposta (log-logístico)
+library(ec50estimator) # Estimativa automatizada de EC50
+```
+
+# Análise de regressão
+
+### **Introdução teórica**
+
+A análise de regressão é utilizada quando se deseja avaliar a relação entre uma variável independente (ou preditora) e uma variável dependente (ou resposta). No caso da **regressão linear**, o modelo assume que há uma relação linear entre as variáveis. A equação geral é:
+
+Y=β0​+β1​X+ϵ
+
+Já a **regressão não linear** é usada quando os dados não seguem um padrão linear. Um exemplo comum em estudos de sensibilidade é o modelo log-logístico de três parâmetros (LL.3), que é frequentemente usado para modelar respostas a doses crescentes, como a inibição da germinação por fungos.
+
+## Regressão linear simples por experimento
+
+### Objetivo
+
+Avaliar o efeito de diferentes níveis de inóculo de sementes sobre o número de plantas emergidas (variável resposta `nplants`) em **três experimentos independentes** (`exp`), por meio de **modelos de regressão linear simples**.
+
+### Importação e visualização dos dados
+
+Foi utilizado um conjunto de dados (`estande`) com três experimentos avaliando o efeito do percentual de inóculo de sementes (`trat`) sobre o número de plantas emergidas (`nplants`).
+
+```{r}
+library(gsheet)
+estande <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=401662555#gid=401662555")
+```
+
+A visualização inicial mostra os pontos de cada experimento com ajuste de linha de regressão linear:
+
+```{r}
+
+view(estande)
+#trat = nível de inóculo na semente
+library(ggplot2)
+estande |> ggplot(aes(trat, nplants))+
+  geom_point (color = "yellow") +
+  geom_smooth(method = "lm", se = TRUE,
+              color = "orange") +
+  facet_wrap(~exp) +
+  theme_minimal() +
+  labs (x = "% de inóculo de semente",
+        y = "Número de plantas")
+
+```
+
+### Ajuste do modelo linear por experimento
+
+```{r}
+library(tidyverse)
+#Experimento 01
+exp1 <- estande |> 
+  filter(exp == 1)
+
+m_exp1 <- lm(nplants ~ trat, data = exp1)
+summary(m_exp1)
+
+#Experimento 02
+exp2 <- estande |> 
+  filter(exp == 2)
+
+m_exp2 <- lm(nplants ~ trat, data = exp2)
+summary(m_exp2)
+
+#Experimento 03
+exp3 <- estande |> 
+  filter(exp == 3)
+
+m_exp3 <- lm(nplants ~ trat, data = exp3)
+summary(m_exp3) 
+
+```
+
+Foram conduzidos três experimentos independentes para avaliar o efeito do nível de inóculo aplicado às sementes sobre a emergência de plantas. Para cada experimento, foi ajustado um modelo de regressão linear simples, considerando o número de plantas emergidas como variável resposta (`nplants`) e o percentual de inóculo como variável explicativa (`trat`).
+
+No **Experimento 1**, não foi observada relação estatisticamente significativa entre o nível de inóculo e o número de plantas (p = 0,207), com baixa explicação da variância (R² = 7,1%).
+
+Já no **Experimento 2**, o aumento do inóculo resultou em **redução significativa** na emergência (p \< 0,001), com um decréscimo médio de 0,70 plantas para cada 1% de inóculo, e um bom ajuste do modelo (R² = 46,4%).
+
+O **Experimento 3** apresentou o efeito mais evidente, com **redução altamente significativa** da emergência (p \< 0,001), uma inclinação de -0,76 e explicação robusta da variação (R² = 60,8%).
+
+Em conjunto, os resultados indicam que o aumento do nível de inóculo nas sementes pode prejudicar a emergência de plantas, embora esse efeito varie entre experimentos. Isso sugere que fatores específicos de cada experimento, como ambiente ou manejo, podem influenciar a intensidade da resposta. Um modelo misto, incluindo o experimento como efeito aleatório, pode capturar essa variação de forma mais apropriada.
+
+# Modelo misto (com bloco como efeito aleatório)
+
+Quando os experimentos envolvem blocos (como repetição experimental), podemos considerar o **efeito aleatório** desses blocos com um modelo misto. Nesse caso, foi considerado o modelo abaixo.
+
+Esse modelo permite levar em conta a variação entre experimentos e entre blocos dentro de cada experimento.
+
+A função `Anova()` fornece os valores de F e os p-valores para o efeito fixo de `trat`:
+
+```{r}
+library(lme4)
+m_misto <- lmer(nplants ~trat + (1 | exp/bloco), data = estande)
+confint(m_misto)
+library(car)
+car::Anova(m_misto)
+
+
+summary(m_misto)
+```
+
+### Visualização de dados
+
+A reta de regressão ajustada com os coeficientes estimados foi visualizada através do código abaixo.
+
+```{r}
+estande |> 
+  ggplot(aes(trat, nplants, color = factor(exp))) +
+  geom_point()+
+  #geom_smooth(method = "lm", se = FALSE) +
+  geom_abline(intercept = 69.74524,
+                slope = -0.568, linewidth = 2) +
+  geom_abline(intercept = 43,
+              slope = -0.73, linetype = "dashed")+
+  geom_abline(intercept = 96,
+              slope = -0.40, linetype = "dashed")
+```
+
+# Regressão não linear (modelo log-logístico)
+
+### **Objetivo do experimento**
+
+Avaliar o efeito de diferentes doses de inóculo sobre a **germinação de sementes**, considerando diferentes **isolados fúngicos (code)**, usando um modelo de regressão não linear **log-logístico (LL.3)** para estimar a **EC50** — a dose necessária para reduzir a germinação em 50%.
+
+### Importação e visualização dos dados **Descrição:** Os dados contêm as variáveis
+
+-   `code`: identificador do isolado fúngico;
+
+-   `dose`: dose do inóculo;
+
+-   `germination`: porcentagem de germinação;
+
+-   `state`: origem do isolado.
+
+```{r}
+fungi <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=465348652#gid=465348652")
+view(fungi)
+```
+
+### Visualização da germinação por dose e isolado
+
+```{r}
+fungi |>
+  group_by(code, dose) |>  
+  summarise(germination = mean (germination)) |> 
+  ggplot(aes(dose, germination)) +
+  geom_point()+
+  geom_line()+
+  facet_wrap(~ code)
+```
+
+**Interpretação:** Este gráfico permite visualizar como a germinação varia com a dose para **cada isolado**. Em geral, espera-se uma **tendência de redução da germinação com o aumento da dose**, sugerindo um efeito inibitório do inóculo.
+
+### Ajuste do modelo log-logístico para um isolado específico (exemplo: FGT43)
+
+```{r}
+library(tidyverse)
+library(drc)
+
+#Separar por isolado
+FGT43 <- fungi |> 
+  group_by(code, dose) |> 
+  summarise(germination = mean(germination)) |> 
+  filter(code == "FGT43")
+
+#MODELO LL.3, PODE SER WP.3
+library(drc)
+m43 <- drm(germination ~dose,
+           data = FGT43,
+           fct = LL.3())
+summary(m43)
+AIC(m43)
+plot(m43)
+```
+
+**Interpretação do modelo:**
+
+-   **Modelo:** log-logístico com 3 parâmetros:
+
+    -   `b`: inclinação da curva;
+
+    -   `d`: valor máximo da resposta (germinação);
+
+    -   `e`: EC50 (dose que reduz a resposta à metade).
+
+Resultados:
+
+-   O modelo tem **bom ajuste** (erro residual 1.63).
+
+-   O **valor de EC50 = 0.496** indica que o isolado FGT43 é relativamente agressivo: com apenas \~0.5 unidade de dose, a germinação já cai pela metade.
+
+### Cálculo direto do EC50 para o isolado
+
+```{r}
+#cálculo de EC50 - colocar modelo e quanto é o controle
+ED(m43, 50)
+```
+
+> Isso confirma que o isolado FGT43 tem uma **alta toxicidade**, afetando a germinação já em baixas doses.
+
+### Cálculo automático da EC50 para todos os isolados
+
+```{r}
+library(ec50estimator)
+
+
+df_ec50 <- suppressWarnings(
+  estimate_EC50(
+    germination ~ dose,
+    data = fungi,
+    isolate_col = "code",
+    strata_col = "state",
+    interval = "delta",
+    fct = drc::LL.3()
+  )
+)
+head(df_ec50)
+```
+
+**Interpretação:** EC50s **variam bastante entre os isolados**, indicando **diferenças na agressividade**. Valores baixos de EC50 sugerem que o isolado inibe fortemente a germinação mesmo em **doses pequenas**.
+
+::: {.callout-warning appearance="minimal"}
+A análise apresentou vários avisos "Warning: NaNs produzidos". Esses avisos podem ocorrer quando:
+
+-   Alguns isolados têm dados insuficientes para ajuste confiável;
+
+-   Há valores de germinação zero ou inconsistentes;
+
+-   Falta replicação em certas doses.
+:::
+
+### Visualização dos EC50s por isolado
+
+```{r}
+
+df_ec50 |> 
+  ggplot(aes(reorder(ID, Estimate), Estimate))+
+  geom_point()+
+  coord_flip()
+
+df_ec50 |> 
+  ggplot(aes(x = Estimate))+
+  geom_histogram(bins = 10, color = "white")
+```
+
+-   Isolados com menor EC50 aparecem no topo (mais agressivos);
+
+-   O histograma mostra a distribuição geral da toxicidade dos isolados;
+
+-   Alguns isolados têm **EC50s muito baixos**, sendo candidatos a maior atenção.
+
+### Conclusão biológica e estatística
+
+-   A regressão log-logística é **adequada para modelar respostas de germinação** em função da dose de inóculo, pois capta o comportamento sigmoidal esperado;
+
+-   A **EC50** permite comparar quantitativamente a **agressividade dos isolados**.
+
+-   **Isolados com EC50 baixos** são mais impactantes na germinação e podem indicar maior patogenicidade;
+
+-   A **variação entre isolados** reforça a importância de testes individuais em programas de seleção ou controle.

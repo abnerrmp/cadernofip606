@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Testes de comparação entre dois grupos (Teste-t &amp; teste de Wilcoxon pareado) – Caderno - Análise de Dados (FIP-606) – Abner</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./r-icon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-de84f8d6bb715db06a919283c2d1e787.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-fa10acb894f172e555d2cfcaf400623a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./r-icon.svg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Caderno - Análise de Dados (FIP-606) – Abner</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./apresentacao.html"> <i class="bi bi-house" role="img">
+</i> 
+<span class="menu-text">Apresentação</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sobre-o-r" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Sobre o R</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-sobre-o-r">    
+        <li>
+    <a class="dropdown-item" href="./index.html"><i class="bi bi-book" role="img">
+</i> 
+ <span class="dropdown-text">A disciplina</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./introducaoaor.html"><i class="bi bi-play-circle" role="img">
+</i> 
+ <span class="dropdown-text">Introdução ao R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./carregar_dados.html"><i class="bi bi-database" role="img">
+</i> 
+ <span class="dropdown-text">Carregamento de Dados</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-análises-estatísticas" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Análises Estatísticas</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-análises-estatísticas">    
+        <li>
+    <a class="dropdown-item" href="./testes_de_comparação_entre_dois_grupos_testet_t_teste_de_wilcoxon_pareado.qmd"><i class="bi bi-bar-chart" role="img">
+</i> 
+ <span class="dropdown-text">Testes entre dois grupos</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./testes_de_comparação_multiplos_anova.html"><i class="bi bi-table" role="img">
+</i> 
+ <span class="dropdown-text">Comparações múltiplas (ANOVA)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./anova_dbc_parcelas_sub.html"><i class="bi bi-boxes" role="img">
+</i> 
+ <span class="dropdown-text">ANOVA DBC/Parcelas</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./regressao.html"><i class="bi bi-line-chart" role="img">
+</i> 
+ <span class="dropdown-text">Regressão</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./audpc.html"><i class="bi bi-stopwatch" role="img">
+</i> 
+ <span class="dropdown-text">AUDPC</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./mapa.html"> <i class="bi bi-geo-alt" role="img">
+</i> 
+<span class="menu-text">Mapa</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projeto-no-r" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Projeto no R</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-projeto-no-r">    
+        <li>
+    <a class="dropdown-item" href="./index2.html"><i class="bi bi-info-circle" role="img">
+</i> 
+ <span class="dropdown-text">Sobre</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./obtencao_dados.html"><i class="bi bi-download" role="img">
+</i> 
+ <span class="dropdown-text">Obtenção de Dados</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./analise.html"><i class="bi bi-bar-chart" role="img">
+</i> 
+ <span class="dropdown-text">Análise</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/abnerrmp"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Testes de comparação entre dois grupos (Teste-t &amp; teste de Wilcoxon pareado)</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Navegação</h2>
+   
+  <ul>
+  <li><a href="#teste-t" id="toc-teste-t" class="nav-link active" data-scroll-target="#teste-t"><strong>Teste-t</strong></a>
+  <ul class="collapse">
+  <li><a href="#importação-de-dados" id="toc-importação-de-dados" class="nav-link" data-scroll-target="#importação-de-dados"><strong>Importação de dados</strong></a>
+  <ul class="collapse">
+  <li><a href="#visualização-inicial" id="toc-visualização-inicial" class="nav-link" data-scroll-target="#visualização-inicial">Visualização inicial</a></li>
+  </ul></li>
+  <li><a href="#reorganização-dos-dados-para-teste-t" id="toc-reorganização-dos-dados-para-teste-t" class="nav-link" data-scroll-target="#reorganização-dos-dados-para-teste-t">Reorganização dos dados para Teste T</a></li>
+  <li><a href="#teste-t-1" id="toc-teste-t-1" class="nav-link" data-scroll-target="#teste-t-1">Teste T</a>
+  <ul class="collapse">
+  <li><a href="#teste-t-básico-com-t.test" id="toc-teste-t-básico-com-t.test" class="nav-link" data-scroll-target="#teste-t-básico-com-t.test">Teste T básico com <code>t.test</code></a></li>
+  <li><a href="#teste-t-com-rstatix" id="toc-teste-t-com-rstatix" class="nav-link" data-scroll-target="#teste-t-com-rstatix">Teste T com <code>rstatix</code></a></li>
+  <li><a href="#visualização-de-dados-com-valor-de-p" id="toc-visualização-de-dados-com-valor-de-p" class="nav-link" data-scroll-target="#visualização-de-dados-com-valor-de-p">Visualização de dados com valor de p</a></li>
+  <li><a href="#salvar-imagem" id="toc-salvar-imagem" class="nav-link" data-scroll-target="#salvar-imagem">Salvar imagem</a></li>
+  </ul></li>
+  <li><a href="#verificação-de-pressupostos-do-teste-t" id="toc-verificação-de-pressupostos-do-teste-t" class="nav-link" data-scroll-target="#verificação-de-pressupostos-do-teste-t">Verificação de Pressupostos do Teste T</a>
+  <ul class="collapse">
+  <li><a href="#normalidade" id="toc-normalidade" class="nav-link" data-scroll-target="#normalidade">Normalidade</a></li>
+  <li><a href="#homogeneidade-de-variâncias" id="toc-homogeneidade-de-variâncias" class="nav-link" data-scroll-target="#homogeneidade-de-variâncias">Homogeneidade de variâncias</a></li>
+  </ul></li>
+  <li><a href="#teste-t-pareado-escala" id="toc-teste-t-pareado-escala" class="nav-link" data-scroll-target="#teste-t-pareado-escala">Teste T pareado (Escala)</a>
+  <ul class="collapse">
+  <li><a href="#análise-separada-dos-grupos" id="toc-análise-separada-dos-grupos" class="nav-link" data-scroll-target="#análise-separada-dos-grupos">Análise separada dos grupos</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 class="title display-7">Testes de comparação entre dois grupos (Teste-t &amp; teste de Wilcoxon pareado)</h1></header>
+
+<header id="title-block-header">
+
+
+</header>
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gsheet)    <span class="co"># Importar dados do Google Sheets</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)     <span class="co"># Manipulação de dados (filter, select, pull, etc.)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)     <span class="co"># Pivot_wider para transformar dados</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)   <span class="co"># Gráficos com ggplot (usado via tidyverse ou separadamente)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)    <span class="co"># ggboxplot e stat_pvalue_manual para visualização e p-valor no gráfico</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(report)    <span class="co"># Relatório interpretado do teste t</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)   <span class="co"># Funções de teste estatístico, como t_test()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="teste-t" class="level1">
+<h1><strong>Teste-t</strong></h1>
+<p>O teste t-Student, ou simplesmente teste-t, é o método mais utilizado para se avaliar as diferenças entre as médias entre dois grupos. É um teste de hipótese que usa conceitos estatísticos para rejeitar ou não uma hipótese nula quando a estatística de teste (t) segue uma distribuição <em>t</em> de Student.</p>
+<p>As hipóteses formuladas em um teste-t comparam as médias entre dois grupos, podendo estas serem dependentes ou independentes.</p>
+<ul>
+<li><p><strong>Hipótese nula (Ho)</strong>: a média do grupo 1 é igual a média do grupo 2</p></li>
+<li><p><strong>Hipótese alternativa (Ha)</strong>: a média do grupo 1 é diferente da média do grupo 2</p></li>
+</ul>
+<p>Tendo formulado as hipóteses, o teste-t irá calcular o valor de <em>t</em> e vai aplicá-lo à função densidade de probabilidade da distribuição <em>t</em> de Student medindo o tamanho da área abaixo dessa função para valores maiores ou iguais a <em>t</em>. Essa área representa a probabilidade da média dessa(s) amostra(s) em questão ter(em) apresentado o(s) valor(es) observado(s) ou algo mais extremo. Se a probabilidade desse resultado ter ocorrido for muito pequena, podemos concluir que o resultado observado é estatisticamente relevante. Essa probabilidade também é chamada de p-valor ou valor <em>p</em>.</p>
+<p>Caso o nível de significância do p-valor for de 5% e a área abaixo da função densidade de probabilidade da distribuição <em>t</em> de Student seja menor do que 5%, pode-se afirmar que a hipótese nula é rejeitada com nível de confiança de 95%.</p>
+<p>Note que não rejeitar a hipótese nula não é a mesma coisa que afirmar que a hipótese alternativa é válida com o mesmo nível de confiança. Isso seria uma interpretação incorreta do teste.</p>
+<section id="importação-de-dados" class="level2">
+<h2 class="anchored" data-anchor-id="importação-de-dados"><strong>Importação de dados</strong></h2>
+<p>O conjunto de dados foi importado do Google Sheet usando a função <code>gsheet2tbl()</code> do pacote <code>gsheet</code>. Nesse conjunto existem dois grupos independentes: um grupo de plantas em que foi aplicado Mg2 e um grupo de plantas controle (sem aplicação).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dat_mg <span class="ot">&lt;-</span> <span class="fu">gsheet2tbl</span>(<span class="st">"https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=983033137#gid=983033137"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos observar que o conjunto de dados está no formato longo. Para o teste-t, é preciso que os dados estejam no formato largo, portanto eles serão transformados através da função <code>pivot_wider()</code>.</p>
+<section id="visualização-inicial" class="level3">
+<h3 class="anchored" data-anchor-id="visualização-inicial">Visualização inicial</h3>
+</section>
+</section>
+<section id="reorganização-dos-dados-para-teste-t" class="level2">
+<h2 class="anchored" data-anchor-id="reorganização-dos-dados-para-teste-t">Reorganização dos dados para Teste T</h2>
+<p>A transformação para formato largo com&nbsp;é necessária para testes que comparam variáveis emparelhadas.</p>
+<ul>
+<li><p>Usou-se <code>pivot_wider()</code> para transformar os dados de formato longo para largo, criando colunas separadas para <code>control</code> e <code>Mg2</code>;</p></li>
+<li><p>Removeu-se a coluna <code>rep</code>;</p></li>
+<li><p>Usou-se <code>attach()</code> para facilitar o acesso direto às variáveis <code>Mg2</code> e <code>control</code>.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dat_mg2 <span class="ot">&lt;-</span> dat_mg <span class="sc">|&gt;</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> trat, <span class="at">values_from =</span> comp) <span class="sc">|&gt;</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>rep)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">attach</span>(dat_mg2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="teste-t-1" class="level2">
+<h2 class="anchored" data-anchor-id="teste-t-1">Teste T</h2>
+<section id="teste-t-básico-com-t.test" class="level3">
+<h3 class="anchored" data-anchor-id="teste-t-básico-com-t.test">Teste T básico com <code>t.test</code></h3>
+<p>O teste t de Student compara médias de dois grupos independentes. A implementação padrão no R utiliza a correção de Welch, que não assume igualdade de variâncias, tornando-o robusto mesmo quando esse pressuposto é violado. A direção da comparação (grupo A vs B ou B vs A) não altera a magnitude da diferença, apenas o sinal do valor t.</p>
+<ul>
+<li>O segundo teste foi armazenado em <code>t_results</code> para reutilização.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(Mg2, control) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  Mg2 and control
+t = -8.1549, df = 17.354, p-value = 2.423e-07
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -6.490393 -3.825607
+sample estimates:
+mean of x mean of y 
+   10.520    15.678 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>t_results <span class="ot">&lt;-</span> <span class="fu">t.test</span>(control, Mg2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="relatório-com-report" class="level4">
+<h4 class="anchored" data-anchor-id="relatório-com-report">Relatório com <code>report</code></h4>
+<p><code>report(t_results)</code>: gera uma descrição interpretada do teste, facilitando a compreensão dos resultados.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(report) </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">report</span>(t_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Effect sizes were labelled following Cohen's (1988) recommendations.
+
+The Welch Two Sample t-test testing the difference between control and Mg2
+(mean of x = 15.68, mean of y = 10.52) suggests that the effect is positive,
+statistically significant, and large (difference = 5.16, 95% CI [3.83, 6.49],
+t(17.35) = 8.15, p &lt; .001; Cohen's d = 3.65, 95% CI [2.14, 5.12])</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="teste-t-com-rstatix" class="level3">
+<h3 class="anchored" data-anchor-id="teste-t-com-rstatix">Teste T com <code>rstatix</code></h3>
+<p><code>t_test(comp ~ trat, data = dat_mg)</code>: aplica o teste t com sintaxe mais legível.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix) </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">t_test</span>(comp <span class="sc">~</span> trat, <span class="at">data =</span> dat_mg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualização-de-dados-com-valor-de-p" class="level3">
+<h3 class="anchored" data-anchor-id="visualização-de-dados-com-valor-de-p">Visualização de dados com valor de p</h3>
+<p>Através do boxplot é possível assumir visualmente que os grupos seguem uma distribuição normal (pela simetria do boxplot formado) e que possuem variância homogênea (a estrutura dos dois boxplot são similares), mas os testes de premissas ainda devem ser feitos para confirmar.</p>
+<ul>
+<li><p><code>ggboxplot()</code> cria boxplots coloridos por grupo;</p></li>
+<li><p><code>stat_pvalue_manual()</code> adiciona o valor-p diretamente no gráfico. A inclusão do valor-p no gráfico proporciona contexto imediato aos resultados estatísticos.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggboxplot</span> (</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  dat_mg, <span class="at">x =</span> <span class="st">"trat"</span>, <span class="at">y =</span> <span class="st">"comp"</span>, <span class="at">color =</span> <span class="st">"trat"</span>, <span class="at">palette =</span> <span class="st">"jco"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the p-value manually</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">stat_pvalue_manual</span>(test, <span class="at">label =</span><span class="st">"p"</span>, <span class="at">y.position =</span> <span class="dv">18</span>)<span class="sc">+</span><span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_entre_dois_grupos_testet_teste_de_wilcoxon_pareado_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="salvar-imagem" class="level3">
+<h3 class="anchored" data-anchor-id="salvar-imagem">Salvar imagem</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plot2.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="verificação-de-pressupostos-do-teste-t" class="level2">
+<h2 class="anchored" data-anchor-id="verificação-de-pressupostos-do-teste-t">Verificação de Pressupostos do Teste T</h2>
+<p>Antes de aplicar o teste t, é importante garantir que os dados sigam seus pressupostos:</p>
+<section id="normalidade" class="level3">
+<h3 class="anchored" data-anchor-id="normalidade">Normalidade</h3>
+<p>Os testes de normalidade (Shapiro-Wilk) avaliam formalmente se a distribuição dos dados desvia-se significativamente da distribuição normal. Esta verificação é crucial porque o teste t assume que os resíduos seguem distribuição normal. Porém, em amostras pequenas (&lt;30 observações), esses testes têm baixo poder estatístico, sendo mais informativos os diagnósticos visuais como QQ-plots e histogramas.</p>
+<ul>
+<li><p><code>shapiro.test(Mg2)</code> e <code>shapiro.test(control)</code> testam se os dados têm distribuição normal;</p></li>
+<li><p><code>hist()</code> permite ver graficamente a forma da distribuição.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(Mg2) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  Mg2
+W = 0.97269, p-value = 0.9146</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(control) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  control
+W = 0.93886, p-value = 0.5404</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(Mg2) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_entre_dois_grupos_testet_teste_de_wilcoxon_pareado_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(control)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_entre_dois_grupos_testet_teste_de_wilcoxon_pareado_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="homogeneidade-de-variâncias" class="level3">
+<h3 class="anchored" data-anchor-id="homogeneidade-de-variâncias">Homogeneidade de variâncias</h3>
+<p>O teste F de variâncias verifica a homocedasticidade (igualdade de variâncias entre grupos), pressuposto essencial para o teste t clássico. Quando rejeitado (p &lt; 0.05), recomenda-se manter o teste t de Welch, que é robusto a heterocedasticidade. Alternativamente, o teste de Levene é menos sensível a desvios de normalidade.</p>
+<ul>
+<li><code>var.test(dat_Mg2, control)</code> verifica se os dois grupos possuem variâncias semelhantes, o que é esperado no teste t clássico.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(dat_mg2<span class="sc">$</span>Mg2, dat_mg2<span class="sc">$</span>control)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    F test to compare two variances
+
+data:  dat_mg2$Mg2 and dat_mg2$control
+F = 1.4781, num df = 9, denom df = 9, p-value = 0.5698
+alternative hypothesis: true ratio of variances is not equal to 1
+95 percent confidence interval:
+ 0.3671417 5.9508644
+sample estimates:
+ratio of variances 
+          1.478111 </code></pre>
+</div>
+</div>
+<p>Se esses pressupostos não forem atendidos, outras abordagens são necessárias (ex: teste de Wilcoxon).</p>
+</section>
+</section>
+<section id="teste-t-pareado-escala" class="level2">
+<h2 class="anchored" data-anchor-id="teste-t-pareado-escala">Teste T pareado (Escala)</h2>
+<p>Em desenhos experimentais com medidas repetidas (como “antes-depois”), o teste t pareado considera a correlação intrínseca entre as observações, aumentando o poder estatístico. O teste de Wilcoxon pareado (não-paramétrico) é alternativa quando os pressupostos de normalidade não são atendidos, comparando medianas em vez de médias.</p>
+<section id="importação-e-visualização-de-dados" class="level4">
+<h4 class="anchored" data-anchor-id="importação-e-visualização-de-dados">Importação e visualização de dados</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>escala <span class="ot">&lt;-</span> <span class="fu">gsheet2tbl</span>(<span class="st">"https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=1729131173#gid=1729131173"</span>)  </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>escala <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(assessment, acuracia)) <span class="sc">+</span>   <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_entre_dois_grupos_testet_teste_de_wilcoxon_pareado_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Apenas pelo gráfico é possível observar que a estutura dos dois grupos é diferente um do outro, podendo indicar variâncias heterogêneas.</p>
+<p>A função <code>pivot_wider()</code> foi usada para transformar o conjunto de dados de formato longo para formato largo.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>escala2 <span class="ot">&lt;-</span> escala <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(assessment, rater, acuracia) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(<span class="at">names_from =</span> assessment, <span class="at">values_from =</span> acuracia)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="teste-de-premissas" class="level4">
+<h4 class="anchored" data-anchor-id="teste-de-premissas"><strong>Teste de premissas</strong></h4>
+<p>Foi usada a função <code>shapiro.test()</code> para cada grupo para determinar se eles seguem normalidade ou não.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(escala2<span class="sc">$</span>Unaided)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  escala2$Unaided
+W = 0.7748, p-value = 0.007155</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(escala2<span class="sc">$</span>Aided1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  escala2$Aided1
+W = 0.92852, p-value = 0.4335</code></pre>
+</div>
+</div>
+<ul>
+<li><p>Como <strong>p &gt; 0.05</strong> (neste caso, <strong>p = 0.4335</strong>), <strong>não rejeitamos a hipótese nula</strong>. O teste diz que os dados da coluna <code>Aided1</code> <strong>não estão muito distantes de uma curva normal</strong>, então pode-se, em geral, <strong>usar testes paramétricos</strong> (como o <strong>teste t</strong>) com essa variável.</p></li>
+<li><p>Como <strong>p &lt; 0.05</strong> (neste caso, <strong>p = 0.007</strong>), <strong>rejeitamos a hipótese nula</strong>. Os dados da variável <code>Unaided</code> <strong>não têm uma distribuição normal</strong>. Portanto, para realizar testes estatísticos envolvendo essa variável, deve-se considerar o uso de <strong>testes não paramétrico.</strong></p>
+<p>Em seguida foi realizado o teste de variância pela função <code>var.test()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(escala2<span class="sc">$</span>Unaided, escala2<span class="sc">$</span>Aided1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    F test to compare two variances
+
+data:  escala2$Unaided and escala2$Aided1
+F = 20.978, num df = 9, denom df = 9, p-value = 0.000106
+alternative hypothesis: true ratio of variances is not equal to 1
+95 percent confidence interval:
+  5.210754 84.459185
+sample estimates:
+ratio of variances 
+          20.97847 </code></pre>
+</div>
+</div></li>
+</ul>
+<!-- -->
+<ul>
+<li>Como <strong>p &lt; 0.05</strong>, <strong>rejeitamos a hipótese nula</strong>. Os dados mostram que a dispersão (variação) dos valores em <code>Unaided</code> é <strong>muito maior</strong> do que em <code>Aided1</code>, e essa diferença <strong>é estatisticamente significativa</strong>.</li>
+</ul>
+</section>
+<section id="teste-t-pareado" class="level4">
+<h4 class="anchored" data-anchor-id="teste-t-pareado">Teste-t pareado</h4>
+<p>Para este caso de conjunto de dados onde os dois grupos são dependentes e apresentam variâncias heterogêneas, o teste-t é realizado com a função <code>t.test()</code> usando os argumentos <code>paired = TRUE</code> e <code>var.equal = FALSE</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_test</span>(acuracia <span class="sc">~</span> assessment, <span class="at">data =</span> escala, <span class="at">paired =</span> <span class="cn">TRUE</span>, <span class="at">var.equal =</span> <span class="cn">FALSE</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 8
+  .y.      group1 group2     n1    n2 statistic    df       p
+* &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1 acuracia Aided1 Unaided    10    10      4.42     9 0.00167</code></pre>
+</div>
+</div>
+<p>Como o p-valor foi inferior ao nível de significância, rejeitamos a hipótese nula de que os dois grupos são iguais.</p>
+</section>
+<section id="análise-separada-dos-grupos" class="level3">
+<h3 class="anchored" data-anchor-id="análise-separada-dos-grupos">Análise separada dos grupos</h3>
+<ul>
+<li><p><code>escala</code> foi importado com <code>gsheet2tbl()</code>.</p></li>
+<li><p><code>t_test(acuracia ~ assessment, paired = TRUE)</code>: compara a acurácia com e sem intervenção.</p></li>
+<li><p><code>ggplot</code> com <code>geom_boxplot()</code> mostra visualmente essa comparação;</p></li>
+<li><p><code>unaided</code> e <code>aided</code> foram criados com <code>filter()</code> e <code>pull()</code>.</p></li>
+<li><p>Aplicaram-se testes de normalidade (<code>shapiro.test()</code>), variância (<code>var.test()</code>), seguido de:</p>
+<ul>
+<li><p><code>t.test(unaided, aided, paired = TRUE)</code></p></li>
+<li><p><code>wilcox.test(unaided, aided = FALSE)</code>: caso não haja normalidade (teste não paramétrico).</p></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Carregar pacotes necessários</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Separar os vetores de acurácia para os dois tipos de avaliação</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>unaided <span class="ot">&lt;-</span> escala <span class="sc">|&gt;</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(assessment <span class="sc">==</span> <span class="st">"Unaided"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(acuracia) <span class="sc">|&gt;</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>()</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>aided <span class="ot">&lt;-</span> escala <span class="sc">|&gt;</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(assessment <span class="sc">==</span> <span class="st">"Aided1"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(acuracia) <span class="sc">|&gt;</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>()</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste F para comparar variâncias</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="fu">var.test</span>(unaided, aided)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    F test to compare two variances
+
+data:  unaided and aided
+F = 20.978, num df = 9, denom df = 9, p-value = 0.000106
+alternative hypothesis: true ratio of variances is not equal to 1
+95 percent confidence interval:
+  5.210754 84.459185
+sample estimates:
+ratio of variances 
+          20.97847 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Testes de normalidade (Shapiro-Wilk)</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(unaided)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  unaided
+W = 0.7748, p-value = 0.007155</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(aided)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  aided
+W = 0.92852, p-value = 0.4335</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste t pareado (sem assumir variâncias iguais)</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(unaided, aided, <span class="at">paired =</span> <span class="cn">TRUE</span>, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Paired t-test
+
+data:  unaided and aided
+t = -4.4214, df = 9, p-value = 0.001668
+alternative hypothesis: true mean difference is not equal to 0
+95 percent confidence interval:
+ -0.3552353 -0.1147647
+sample estimates:
+mean difference 
+         -0.235 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Wilcoxon pareado (alternativa não paramétrica ao t pareado)</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(unaided, aided, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Wilcoxon signed rank test with continuity correction
+
+data:  unaided and aided
+V = 0, p-value = 0.005889
+alternative hypothesis: true location shift is not equal to 0</code></pre>
+</div>
+</div>
+<p>Foi realizada uma comparação entre os desempenhos nas condições <em>unaided</em> (sem ajuda) e <em>aided</em> (com ajuda) utilizando dados de acurácia. Inicialmente, o teste de Shapiro-Wilk indicou que os dados da condição <em>unaided</em> não seguem uma distribuição normal (p = 0,007), enquanto os dados da condição <em>aided</em> não apresentaram evidência significativa de desvio da normalidade (p = 0,433), sugerindo distribuição aproximadamente normal.</p>
+<p>Em seguida, o teste F para comparação de variâncias revelou que as variâncias entre as duas condições são significativamente diferentes (p = 0,0001), com a variância da condição <em>unaided</em> sendo consideravelmente maior. Esse resultado viola o pressuposto de homogeneidade de variâncias necessário para alguns testes paramétricos.</p>
+<p>Apesar disso, o teste t pareado, que compara as médias das duas condições assumindo pares de medidas (por exemplo, do mesmo indivíduo), indicou uma diferença estatisticamente significativa entre <em>unaided</em> e <em>aided</em> (p = 0,0017). A média da acurácia foi maior na condição <em>aided</em>, com uma diferença média de aproximadamente 0,235 unidades, indicando melhora no desempenho com o uso da ajuda.</p>
+<p>Como a distribuição dos dados da condição <em>unaided</em> não é normal e há diferença de variâncias, foi também realizado o teste de Wilcoxon pareado, que é uma alternativa não paramétrica ao teste t. Esse teste também indicou uma diferença significativa entre as duas condições (p = 0,0059), confirmando que os participantes apresentaram desempenho significativamente melhor na condição <em>aided</em>.</p>
+<p>Em conjunto, os resultados sugerem de forma robusta que o uso de ajuda (condição <em>aided</em>) melhora significativamente a acurácia em relação à condição sem ajuda (<em>unaided</em>), mesmo considerando a ausência de normalidade e a diferença de variâncias nos dados.</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2025 – Abner Reurisson M. Palhares</p>
+</div>   
+    <div class="nav-footer-center">
+<p>FIP-606 - Análise de Dados</p>
+</div>
+    <div class="nav-footer-right">
+<p>Feito utilizando Quarto website</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

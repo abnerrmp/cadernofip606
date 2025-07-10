@@ -1,0 +1,96 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Caderno - Análise de Dados (FIP-606) – Abner"
+  search: true
+  favicon: "r-icon.svg"
+
+  navbar:
+    background: "primary"
+    logo: "r-icon.svg"
+    left:
+      - text: "Apresentação"
+        file: apresentacao.qmd
+        icon: house
+
+      - text: "Sobre o R"
+        menu:
+          - text: "A disciplina"
+            file: index.qmd
+            icon: book
+          - text: "Introdução ao R"
+            file: introducaoaor.qmd
+            icon: play-circle
+          - text: "Carregamento de Dados"
+            file: carregar_dados.qmd
+            icon: database
+
+      - text: "Análises Estatísticas"
+        menu:
+          - text: "Testes entre dois grupos"
+            file: testes_de_comparação_entre_dois_grupos_testet_t_teste_de_wilcoxon_pareado.qmd
+            icon: bar-chart
+          - text: "Comparações múltiplas (ANOVA)"
+            file: testes_de_comparação_multiplos_anova.qmd
+            icon: table
+          - text: "ANOVA DBC/Parcelas"
+            file: anova_dbc_parcelas_sub.qmd
+            icon: boxes
+          - text: "Regressão"
+            file: regressao.qmd
+            icon: line-chart
+          - text: "AUDPC"
+            file: audpc.qmd
+            icon: stopwatch
+
+      - text: "Mapa"
+        file: mapa.qmd
+        icon: geo-alt
+
+      - text: "Projeto no R"
+        menu:
+          - text: "Sobre"
+            file: index2.qmd
+            icon: info-circle
+          - text: "Obtenção de Dados"
+            file: obtencao_dados.qmd
+            icon: download
+          - text: "Análise"
+            file: analise.qmd
+            icon: bar-chart
+
+    right:
+      - icon: github
+        href: https://github.com/abnerrmp
+
+  sidebar:
+    style: floating
+    background: light
+    header-background: "#f8f9fa"
+
+  page-footer:
+    left: "© 2025 – Abner Reurisson M. Palhares"
+    center: "FIP-606 - Análise de Dados"
+    right: "Feito utilizando Quarto website"
+
+format:
+  html:
+    theme:
+      - cosmo
+      - minty
+    toc: true
+    toc-title: "Navegação"
+    page-layout: full
+    highlight-style: github
+    code-copy: true
+    code-overflow: wrap
+    execute:
+      warning: false
+      message: false
+    css: styles.css
+
+    # Remove títulos das páginas
+    title-block-style: none
+    title-block-banner: false

@@ -1,0 +1,91 @@
+---
+title: "mapa"
+---
+
+```{r}
+library(gsheet)
+library(DT)
+library(tidyverse)
+library(ggthemes)
+library(ggspatial)
+library(rnaturalearth)
+library(rnaturalearthhires)
+```
+
+# Apresentação
+
+A utilização de **mapas como elementos visuais** no R pode ajudar a **localizar espacialmente a ocorrência de doenças** em lavouras e a identificar **padrões geográficos** que, de outra forma, poderiam passar despercebidos em análises apenas tabulares ou gráficas tradicionais.
+
+No caso apresentado, o mapa construído representa a **distribuição geográfica da ferrugem do café na Etiópia**, com base em dados georreferenciados de fazendas monitoradas. Cada ponto no mapa corresponde a uma fazenda, sendo que:
+
+-   A **posição** de cada ponto é determinada pelas coordenadas geográficas (latitude e longitude);
+
+-   A **cor** dos pontos representa a **incidência da doença** (`inc`), com uma escala contínua de cores fornecida por `scale_color_viridis_c()` — uma paleta perceptualmente uniforme e acessível para daltônicos.
+
+## Importar dados
+
+Usaremos a função `gsheet2tbl(" ")` do pacote `[gsheet]` para carregar dados no ambiente.
+
+```{r}
+library(gsheet)
+cr <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=1871397229#gid=1871397229")
+
+```
+
+## Visualizar os dados
+
+Usaremos função `datatable( )` do pacote `[DT]`.
+
+```{r}
+
+library(DT)
+datatable(cr)
+```
+
+## Gráficos
+
+A criação dos mapas foi feita utilizando os seguintes comandos:
+
+-   Cria um gráfico simples de pontos geográficos com `ggplot2`;
+
+-   Mostra **onde estão localizadas** as fazendas;
+
+-   **`rnaturalearth`** e **`rnaturalearthhires`**: fornecem os contornos geográficos da Etiópia;
+
+-   **`ne_states()`**: baixa os estados ou regiões da Etiópia como um objeto espacial (`sf`);
+
+-   `ggsave()`: Salva o gráfico final como imagem PNG com fundo branco e largura 10.
+
+```{r}
+library(tidyverse)
+library(ggthemes)
+library(ggspatial)
+cr |> 
+  ggplot(aes(lon, lat)) +
+  geom_point()
+
+
+library(rnaturalearth)
+library(remotes)
+remotes::install_github("ropensci/rnaturalearthhires")
+ETH <- ne_states(country = "Ethiopia",
+                 returnclass = "sf")
+library(rnaturalearthhires)
+ETH |> 
+  ggplot() + 
+  geom_sf(fill = "white")+
+  geom_point(data = cr, aes(lon, lat, color = inc)) +
+  scale_color_viridis_c()+
+  theme_minimal()+
+  theme(legend.position = "bottom")+
+  annotation_scale(location = "tl")+
+  annotation_north_arrow(location = "br", wich_norh = "true")+
+  labs (title = "Ferrugem do café na Etiópia",
+        x = "Longitude", y = "Latitude",
+        subtitle = "Leventamento em fazendas",
+        caption = "Fonte: Del Ponte et al. (2025)",
+        color = "Incidência (%)")
+ggsave("mapa_etiopia.png", bg = "white", width = 10)
+  
+
+```

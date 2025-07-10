@@ -1,0 +1,467 @@
+---
+title: "anova"
+---
+
+```{r}
+library(gsheet)        # Importa planilhas do Google Sheets
+library(tidyverse)     # Manipulação de dados, ggplot2, dplyr, etc.
+library(ggplot2)       # Gráficos (pode vir via tidyverse)
+library(emmeans)       # Médias ajustadas e comparações múltiplas (Tukey)
+library(multcomp)      # Agrupamento de médias por letras (cld)
+library(multcompView)  # Suporte para cld com letras
+library(car)           # Anova para modelos glm, testes
+library(MASS)          # Box-Cox, transformações
+library(DHARMa)        # Diagnóstico visual de resíduos, modelos
+library(rstatix)       # Testes não paramétricos, Kruskal-Wallis, Levene
+library(agricolae)     # Comparações múltiplas não paramétricas
+library(performance)   # check_model para diagnóstico de modelos
+```
+
+# **ANOVA (Análise de Variância)**
+
+A Análise de Variância (ANOVA) é um teste estatístico paramétrico projetado para comparar as médias de **três ou mais grupos independentes**. Sua principal finalidade é determinar se existem diferenças estatisticamente significativas entre as médias populacionais desses grupos, analisando a partição da variabilidade total dos dados.
+
+#### **Fundamentação Conceitual**
+
+A lógica central da ANOVA reside na decomposição da variabilidade total dos dados em dois componentes:
+
+1.  **Variabilidade entre grupos:** Diferenças atribuíveis aos tratamentos ou fatores estudados
+
+2.  **Variabilidade intra-grupos:** Variação inerente às unidades experimentais (erro aleatório)
+
+Se a variabilidade entre grupos for substancialmente maior que a variabilidade dentro dos grupos, temos evidências de que os tratamentos produzem efeitos diferenciados.
+
+#### **Formulação de Hipóteses**
+
+-   **Hipótese nula (H₀):** μ₁ = μ₂ = ... = μₖ\
+    *(Todas as médias populacionais dos k grupos são iguais)*
+
+-   **Hipótese alternativa (Hₐ):** Pelo menos um μᵢ ≠ μⱼ\
+    *(Existe diferença significativa entre pelo menos um par de médias)*
+
+    #### Tipos de ANOVA
+
+    | **Tipo** | **Fatores** | **Objetivo Principal** | **Exemplo Aplicado** |
+    |:-----------------|:-----------------|:-----------------|:-----------------|
+    | **One-Way ANOVA** | 1 fator | Testar efeito de um único fator categórico | Comparar crescimento de plantas com 3 fertilizantes diferentes |
+    | **Two-Way ANOVA** | 2 fatores | Avaliar efeitos principais + interações | Analisar rendimento agrícola por tipo de solo e regime de irrigação |
+
+    #### **Pressupostos Essenciais**
+
+    Para validade dos resultados, a ANOVA exige:
+
+    1.  **Independência:** Observações não correlacionadas entre grupos
+
+    2.  **Normalidade:** Distribuição aproximadamente normal dos resíduos
+
+    3.  **Homocedasticidade:** Homogeneidade das variâncias entre grupos
+
+    Quando esses pressupostos são violados, alternativas não-paramétricas como o teste de Kruskal-Wallis são recomendadas.
+
+## ANOVA - Crescimento Micelial
+
+#### Importação de dados
+
+```{r}
+micelial <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=959387827#gid=959387827")
+```
+
+#### Visualização dos dados
+
+-   `ggplot` com `geom_boxplot()` e `geom_jitter()` visualiza `tcm` por `especie`;
+
+```{r}
+
+micelial |> ggplot(aes(especie, tcm)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.1)
+
+anova1 <- aov(tcm ~ especie, data = micelial)
+anova2 <- lm(tcm ~ especie, data = micelial)
+anova(anova1)
+anova(anova2)
+
+hist(residuals(anova1))
+shapiro.test(residuals(anova1))
+
+bartlett.test(tcm ~ especie, data = micelial)
+levene_test(tcm ~ especie, data = micelial)
+```
+
+#### Ajuste de modelo e ANOVA
+
+Para realizar uma análise de variância (ANOVA) com o conjunto de dados em questão, o primeiro passo é ajustar os dados a um modelo estatístico que relacione a variável resposta com a(s) variável(is) preditora(s). No exemplo, estamos interessados em avaliar se há diferença significativa nos valores de **tcm** (variável resposta) entre os diferentes níveis da variável **especie** (variável preditora).
+
+Para isso, utilizamos a função `aov()` para ajustar um modelo de ANOVA. Esse modelo assume que **tcm** varia em função dos grupos definidos por **especie**, permitindo testar se as médias de **tcm** diferem significativamente entre as espécies.
+
+Em paralelo, também utilizamos a função `lm()` (modelo linear) com a mesma fórmula.Embora `aov()` e `lm()` utilizem a mesma estrutura de modelo, `aov()` é uma forma especializada de análise de variância, enquanto `lm()` oferece um modelo linear mais geral. Ambas as abordagens podem ser submetidas à função `anova()` para gerar a tabela da análise de variância.
+
+```{r}
+anova1 <- aov(tcm ~ especie, data = micelial)
+anova2 <- lm(tcm ~ especie, data = micelial)
+anova(anova1)
+anova(anova2)
+```
+
+Para executar uma análise de variância com o conjunto de dados trabalhado, o primeiro passo é ajustar os dados em um modelo linear. Esse ajuste é realiza através da função `lm()`, no qual a fórmula `tcm ~ especie` especifica que tcm (a variável resposta) está sendo modelada em função de especie (a variável preditora).
+
+A tabela gerada apresenta os seguintes elementos:
+
+-   **Soma dos Quadrados (Sum Sq):** Quantifica a variação explicada por cada componente do modelo (neste caso, a variação explicada por **especie** e o erro residual).
+
+-   **Graus de liberdade (Df):** Número de parâmetros associados a cada componente da variação.
+
+-   **Quadrado médio (Mean Sq):** Soma dos quadrados dividida pelos respectivos graus de liberdade.
+
+-   **Estatística F (F value):** Razão entre o quadrado médio do fator e o quadrado médio do erro. Indica a força do efeito da variável preditora sobre a variável resposta.
+
+-   **Valor-p (Pr(\>F)):** Indica se o efeito da variável preditora é estatisticamente significativo. Um valor-p menor que 0,05 geralmente sugere que há diferenças significativas entre os grupos de **especie**.
+
+```         
+## Testes de comparação de médias
+
+As comparações post-hoc são necessárias quando a ANOVA global é significativa.
+```
+
+### Comparações múltiplas com `emmeans`
+
+Para identificar quais médias diferem significativamente entre si após a análise de variância, é necessário aplicar um teste de comparação múltipla, como o **teste de Tukey**. Esse método é amplamente utilizado por controlar o erro do Tipo I em situações de múltiplas comparações entre grupos, mantendo a confiabilidade dos resultados mesmo quando várias médias são comparadas simultaneamente.
+
+A implementação foi feita por meio da função `emmeans()` do pacote **emmeans**, que calcula as **médias ajustadas** (também chamadas de médias marginais) da variável resposta para cada nível da variável preditora (neste caso, as espécies). Essas médias são posteriormente comparadas usando:
+
+-   A função `pairs()`, que exibe as comparações par a par entre os grupos;
+
+-   A função `pwpm()`, que mostra uma matriz com os valores-p dessas comparações;
+
+-   E a função `cld()` (do pacote **multcompView**), que **agrupa médias estatisticamente semelhantes com letras iguais**, facilitando a interpretação dos resultados. O argumento `Letters = letters` permite customizar o estilo das letras usadas nos agrupamentos.
+
+Dessa forma, as letras atribuídas aos grupos indicam quais médias **não diferem significativamente entre si** a um nível de significância pré-definido (geralmente α = 0,05). Grupos com letras diferentes apresentam diferenças estatisticamente significativas nas médias da variável resposta.
+
+```{r}
+library(emmeans)
+m <- emmeans(anova2, ~ especie)
+m
+
+library(multcomp)
+cld(m)
+pwpm(m)
+pairs(m)
+```
+
+## **ANOVA de dados não-paramétricos**
+
+### **Abordagens para Violação de Pressupostos na ANOVA**
+
+Quando os pressupostos fundamentais da ANOVA - **normalidade dos resíduos** e **homogeneidade das variâncias (homocedasticidade)** - não são atendidos, a validade dos resultados fica comprometida. Essa situação exige intervenções metodológicas específicas para garantir a robustez da análise. Existem três estratégias principais:
+
+#### **1. Transformação de Dados**
+
+A aplicação de funções matemáticas à variável resposta busca estabilizar variâncias e aproximar a distribuição da normalidade. A escolha da transformação depende do padrão observado nos resíduos:
+
+-   **Logarítmica (log(y))** → Indicada para dados com assimetria positiva (cauda direita alongada)
+
+-   **Raiz quadrada (√y)** → Adequada para dados de contagem (distribuição Poisson)
+
+-   **Inversa (1/y)** → Eficaz quando a média e variância são proporcionalmente relacionadas
+
+-   **Box-Cox** → Método paramétrico que identifica a transformação ótima via máxima verossimilhança
+
+**Limitação:** Resultados devem ser interpretados na escala transformada, o que pode dificultar a compreensão substantiva.
+
+#### **2. Testes Não-Paramétricos**
+
+Alternativas que não exigem distribuição normal nem homocedasticidade:
+
+-   **Kruskal-Wallis** → ANOVA baseada em ranks (substituta direta da One-Way ANOVA)
+
+-   **Teste de Friedman** → Versão para dados pareados/blocos aleatorizados
+
+-   **Métodos de comparação múltipla** → Dunn, Conover-Iman ou Nemenyi (pós-hoc após Kruskal-Wallis)
+
+**Vantagem:** Mantêm validade com distribuições assimétricas e outliers.
+
+#### **3. Modelos Lineares Generalizados (GLM)**
+
+Abordagem mais sofisticada que estende a ANOVA tradicional:
+
+-   **Binomial** → Para proporções (ex: taxa de germinação)
+
+-   **Poisson/Negative Binomial** → Para dados de contagem (ex: número de insetos)
+
+-   **Gamma** → Para dados contínuos assimétricos (ex: tempo de crescimento)
+
+    Esta abordagem estratificada permite enfrentar violações de pressupostos com ferramentas estatísticas validadas, garantindo conclusões científicas robustas mesmo quando as condições ideais não são atendidas.
+
+### Importação de dados
+
+```{r}
+insetos <- InsectSprays
+```
+
+### Visualização de dados
+
+-   `geom_boxplot()` + `geom_jitter()` mostram a variância entre os grupos.
+
+```{r}
+insetos |> ggplot(aes(spray, count)) +
+  geom_boxplot(outlier.color = NA) +
+  geom_jitter(width = 0.1)
+```
+
+#### Ajuste de modelo e ANOVA
+
+Para realizar a análise de variância, os dados foram ajustado ao modelo linear pela função `lm()` e foi executado a `anova()`.
+
+Transformações de dados (como raiz quadrada ou logarítmica) são estratégias para estabilizar variâncias e aproximar distribuições à normalidade. Após análise, os resultados devem ser interpretados na escala original usando **`type = "response"`** para manter a interpretabilidade biológica.
+
+-   `bartlett.test()`, `shapiro.test()`, `qqnorm()` e `qqline()` avaliam os pressupostos da ANOVA.
+
+```{r}
+
+i2 <- lm(count ~ spray, data = insetos)
+anova(i2)
+hist(residuals(i2))
+bartlett.test(count ~ spray, data = insetos)
+shapiro.test(residuals(i2))
+qqnorm(residuals(i2)); qqline(residuals(i2))
+```
+
+A ANOVA indicou que **há diferenças significativas** entre os grupos de **spray** (p \< 0,001), ou seja, pelo menos um grupo tem média diferente na contagem.
+
+No entanto, os **pressupostos da ANOVA foram violados**:
+
+-   **Bartlett:** as variâncias entre os grupos **não são homogêneas** (p \< 0,001).
+
+-   **Shapiro-Wilk:** os resíduos **não seguem distribuição normal** (p = 0,022).
+
+Dessa forma, o resultado da ANOVA pode estar comprometido.
+
+### Alternativa 01: Transformações para normalidade
+
+Como os pressupostos não foram atendidos devemos tentar transformar os dados para encontrar a normalidade:
+
+-   `lm(sqrt(count) ~ spray)`: aplica transformação de raiz quadrada.
+
+-   Reanálise dos resíduos para avaliar melhoria.
+
+-   `emmeans()` + `cld()` mostram comparações com médias transformadas, com `type = "response"` para interpretar no valor original.
+
+```{r}
+m3 <- lm(sqrt(count) ~ spray, data = insetos)
+shapiro.test(residuals(m3))
+qqnorm(residuals(m3)); qqline(residuals(m3))
+anova(m3)
+
+m33 <- emmeans(m3, ~ spray)
+plot(m33)
+cld(m33)
+
+m34 <- emmeans(m3, ~ spray, type = "response")
+plot(m34)
+cld(m34)
+```
+
+Após aplicar a transformação por raiz quadrada na variável de contagem (`sqrt(count)`), os pressupostos da ANOVA foram atendidos, com os resíduos apresentando distribuição normal (teste de Shapiro-Wilk: p = 0,6814). A análise de variância indicou diferenças altamente significativas entre os tipos de spray (F = 44,80; p \< 0,001), confirmando que a eficácia dos sprays varia significativamente. As comparações múltiplas com o método de Tukey mostraram que o spray **C** apresentou a menor média de insetos (mais eficaz), enquanto os sprays **A**, **B** e **F** apresentaram as maiores médias (menos eficazes). Os sprays **D** e **E** ficaram em posição intermediária. As letras de agrupamento indicam que nem todos os grupos diferem entre si, mas o spray **C** se destaca como o mais eficiente no controle dos insetos.
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\
+Quando os resíduos do modelo linear não seguem distribuição normal (verificado com `DHARMa` ou testes de normalidade), uma alternativa é realizar uma **transformação Box-Cox**, que busca uma potência (lambda) que melhore a normalidade dos dados, permitindo o uso de modelos lineares clássicos.
+
+```{r}
+library(tidyverse)
+library(MASS)
+library(DHARMa)
+
+# Dados
+insects <- InsectSprays
+
+# 1. Ajustar o modelo linear
+m1 <- lm(count ~ spray, data = insects)
+
+# 2. Checar pressupostos com DHARMa (CORREÇÃO: passe o modelo 'm1', não os dados)
+sim_res <- simulateResiduals(fittedModel = m1)  # Objeto do modelo aqui!
+plot(sim_res)
+
+# 3. Transformação Box-Cox (ajustada para evitar zeros)
+# - Adicionamos 0.1 aos dados para evitar valores zero/negativos
+b <- boxcox(lm(insects$count + 0.1 ~ 1))
+lambda <- b$x[which.max(b$y)]
+
+# 4. Criar variáveis transformadas
+insects <- insects |> 
+  mutate(
+    count2 = (count^lambda - 1) / lambda,  # Transformação Box-Cox
+    count3 = sqrt(count)                   # Raiz quadrada (alternativa)
+  )
+
+hist(insects$count2)
+```
+
+Se a transformação for eficaz (resíduos mais próximos da normalidade), você pode seguir com ANOVA tradicional com os dados transformados:
+
+```{r}
+m1_boxcox <- lm(count2 ~ spray, data = insects)
+anova(m1_boxcox)
+```
+
+### Alternativa 02 - Testes Não Paramétricos (Sprays)
+
+Quando pressupostos da ANOVA não são atendidos:
+
+#### Rank-transformed ANOVA
+
+`lm(rank(count) ~ spray)`: aplica ANOVA aos ranks (ordens dos valores), menos sensível a distribuição dos dados.
+
+```{r}
+m5 <- lm(rank(count) ~ spray, data = insetos)
+```
+
+#### Teste de Kruskal-Wallis
+
+O teste de Kruskal-Wallis é a alternativa não-paramétrica à ANOVA quando os pressupostos não são atendidos. Ele compara medianas em vez de médias, utilizando ranks dos dados. Requer significância global antes de realizar comparações pareadas, com métodos como Dunn ou Nemenyi que ajustam para múltiplas comparações.
+
+-   `kruskal.test()` e `kruskal_test()` aplicam o teste de Kruskal-Wallis, alternativa não paramétrica à ANOVA.
+
+-   `agricolae::kruskal()` realiza comparações múltiplas com letras como no `cld()`.
+
+Esse tipo de análise é ideal quando os dados são assimétricos, com outliers ou ordinalmente classificados.
+
+```{r}
+kruskal.test(count ~ spray, data = insetos)
+library(rstatix)
+kruskal_test(insetos, count ~ spray)
+
+library(agricolae)
+kruskal(insetos$count, insetos$spray, group = TRUE, console = TRUE)
+```
+
+Os resultados mostram que as duas análises são concordantes quanto ao resultado final da comparação de médias.
+
+### **Alternativa 03 - GLMs**
+
+Modelos Lineares Generalizados (GLMs) são uma extensão dos modelos lineares tradicionais e são especialmente úteis quando os dados violam os pressupostos de normalidade dos resíduos exigidos pela ANOVA clássica. Isso é comum, por exemplo, quando a variável resposta representa contagens, proporções ou categorias.
+
+No caso do conjunto de dados analisado (`insetos`), a variável `count` representa uma **contagem de insetos**, o que justifica o uso de uma distribuição da **família de Poisson**, apropriada para esse tipo de variável. O ajuste do modelo é feito com a função `glm()`, usando o argumento `family = poisson`, como mostrado no código:
+
+```{r}
+m4 <- glm(count ~ spray, data = insetos, family = poisson)
+```
+
+Após o ajuste, a análise de variância pode ser realizada com a função `Anova()` do pacote `car`, que retorna diretamente os valores-p (diferente da função base `anova()`, que mostra apenas os desvios):
+
+```{r}
+library(car)
+Anova(m4)
+```
+
+Para avaliar se o modelo GLM ajustado se comporta adequadamente, é possível inspecionar os resíduos simulados com a função `simulateResiduals()` do pacote `DHARMa`, que oferece diagnósticos visuais eficientes para GLMs:
+
+```{r}
+plot(simulateResiduals(m4))
+```
+
+Para comparar os efeitos dos diferentes tipos de spray, as médias ajustadas pelo modelo são calculadas com a função `emmeans()` (usando `type = "response"` para trazer os valores na escala original da contagem). Em seguida, a função `cld()` do pacote `multcomp` exibe as letras de agrupamento, indicando quais grupos diferem significativamente entre si com base no método de Tukey:
+
+```{r}
+medias_m4 <- emmeans(m4, ~ spray, type = "response")
+cld(medias_m4)
+```
+
+Além disso, o código também utiliza a função `check_model()` do pacote `performance` para comparar visualmente a adequação dos diferentes modelos testados (`i2`, `m3`, `m4`). Essa análise visual é importante para validar os pressupostos dos modelos e justificar a escolha do modelo mais apropriado.
+
+```{r}
+plot(i2)
+library(performance)
+check_model(i2)
+check_model(m3)
+```
+
+O modelo com transformação `sqrt(count)` apresentou bom ajuste, com resíduos normalmente distribuídos, variância homogênea e ausência de pontos influentes, atendendo bem aos pressupostos de um modelo linear. Já o modelo GLM com família Poisson respeita a natureza de contagem da variável, mas apresentou sinais de superdispersão e violação da normalidade dos resíduos. Assim, a versão transformada parece mais adequada neste caso.
+
+## ANOVA fatorial
+
+Quando o conjunto de dados apresenta **dois ou mais fatores explicativos (variáveis categóricas)**, a análise adequada é a **ANOVA fatorial** (ou multifatorial). Esse tipo de análise permite:
+
+-   Avaliar o **efeito principal** de cada fator isoladamente (por exemplo, o efeito do tratamento independentemente da dose);
+
+-   Avaliar o **efeito da interação** entre os fatores (ou seja, se o efeito de um fator depende do nível do outro).
+
+A presença de interação é importante porque, nesse caso, os efeitos dos fatores **não podem ser interpretados separadamente**. Por exemplo, uma dose pode ter um efeito positivo com um tratamento, mas não com outro.
+
+A estrutura do modelo fatorial é expressa com `fator1 * fator2`, o que automaticamente inclui os efeitos principais (`fator1 + fator2`) e o efeito da interação (`fator1:fator2`).
+
+### Importação dos dados
+
+A análise começa com a importação dos dados diretamente de uma planilha do Google Sheets, usando a função `gsheet2tbl()`:
+
+```{r}
+library(gsheet)
+antifungicos <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=2023059672#gid=2023059672")
+```
+
+### Visualização exploratória
+
+Uma visualização inicial dos dados ajuda a entender como a variável resposta (`severity`) varia entre tratamentos e doses. Foi utilizado um gráfico com pontos dispersos (`geom_jitter()`) separados por `treat` (tratamento), com `dose` no eixo x.
+
+```{r}
+library(ggplot2)
+antifungicos |>
+  ggplot(aes(factor(dose), severity, colour = factor(dose))) +
+  geom_jitter(width=0.1) +
+  facet_wrap(~ treat) +
+  theme_bw()
+```
+
+### Ajuste do modelo ANOVA fatorial
+
+Aqui é ajustado um modelo linear com interação entre tratamento e dose. O operador `*` indica que serão considerados tanto os efeitos principais quanto a interação:
+
+```{r}
+m_anti <- lm(severity ~ treat * dose, data = antifungicos)
+anova(m_anti)
+```
+
+### Verificação dos pressupostos
+
+Utilizamos a função `simulate_residuals()` para avaliar visualmente os **pressupostos da ANOVA**, como normalidade dos resíduos e homogeneidade de variâncias.
+
+```{r}
+plot(simulate_residuals(m_anti))
+```
+
+### Estimativa das médias ajustadas
+
+A função `emmeans()` calcula as **médias ajustadas** (ou marginais) para cada nível de `treat` dentro de cada `dose`, e vice-versa. Isso facilita a comparação entre os grupos, considerando o modelo ajustado:
+
+```{r}
+library(emmeans)
+media_anti <- emmeans(m_anti, ~ treat | dose)
+media_anti
+
+media_anti2 <- emmeans(m_anti, ~ dose | treat)
+media_anti2
+```
+
+### Comparações múltiplas com agrupamento por letras
+
+Com a função `cld()`, é possível visualizar os grupos que são estatisticamente diferentes, representados por letras distintas. Grupos que compartilham a mesma letra **não diferem significativamente** entre si.
+
+```{r}
+media_anti2 <-  emmeans(m_anti, ~ dose | treat)
+media_anti2
+cld(media_anti)
+```
+
+|          |         |        |
+|----------|---------|--------|
+| TRAT     |         |        |
+| LI       | 29,2 aA | 5,0 Ab |
+| TEBU     | 2,1 Ba  | 2,0 Aa |
+| CV = 63% |         |        |
+
+### Verificação da interação
+
+O gráfico de interação gerado pela função `interaction.plot()` permite avaliar visualmente se há **interação entre os fatores**. Linhas paralelas indicam ausência de interação; linhas que se cruzam ou divergem indicam possível interação significativa.
+
+```{r}
+interaction.plot(antifungicos$dose, antifungicos$treat, antifungicos$severity)
+```

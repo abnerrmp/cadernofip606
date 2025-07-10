@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>anova – Caderno - Análise de Dados (FIP-606) – Abner</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./r-icon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-de84f8d6bb715db06a919283c2d1e787.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-fa10acb894f172e555d2cfcaf400623a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./r-icon.svg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Caderno - Análise de Dados (FIP-606) – Abner</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./apresentacao.html"> <i class="bi bi-house" role="img">
+</i> 
+<span class="menu-text">Apresentação</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sobre-o-r" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Sobre o R</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-sobre-o-r">    
+        <li>
+    <a class="dropdown-item" href="./index.html"><i class="bi bi-book" role="img">
+</i> 
+ <span class="dropdown-text">A disciplina</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./introducaoaor.html"><i class="bi bi-play-circle" role="img">
+</i> 
+ <span class="dropdown-text">Introdução ao R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./carregar_dados.html"><i class="bi bi-database" role="img">
+</i> 
+ <span class="dropdown-text">Carregamento de Dados</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-análises-estatísticas" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Análises Estatísticas</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-análises-estatísticas">    
+        <li>
+    <a class="dropdown-item" href="./testes_de_comparação_entre_dois_grupos_testet_t_teste_de_wilcoxon_pareado.qmd"><i class="bi bi-bar-chart" role="img">
+</i> 
+ <span class="dropdown-text">Testes entre dois grupos</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./testes_de_comparação_multiplos_anova.html"><i class="bi bi-table" role="img">
+</i> 
+ <span class="dropdown-text">Comparações múltiplas (ANOVA)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./anova_dbc_parcelas_sub.html"><i class="bi bi-boxes" role="img">
+</i> 
+ <span class="dropdown-text">ANOVA DBC/Parcelas</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./regressao.html"><i class="bi bi-line-chart" role="img">
+</i> 
+ <span class="dropdown-text">Regressão</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./audpc.html"><i class="bi bi-stopwatch" role="img">
+</i> 
+ <span class="dropdown-text">AUDPC</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./mapa.html"> <i class="bi bi-geo-alt" role="img">
+</i> 
+<span class="menu-text">Mapa</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projeto-no-r" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Projeto no R</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-projeto-no-r">    
+        <li>
+    <a class="dropdown-item" href="./index2.html"><i class="bi bi-info-circle" role="img">
+</i> 
+ <span class="dropdown-text">Sobre</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./obtencao_dados.html"><i class="bi bi-download" role="img">
+</i> 
+ <span class="dropdown-text">Obtenção de Dados</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./analise.html"><i class="bi bi-bar-chart" role="img">
+</i> 
+ <span class="dropdown-text">Análise</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/abnerrmp"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">anova</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Navegação</h2>
+   
+  <ul>
+  <li><a href="#anova-análise-de-variância" id="toc-anova-análise-de-variância" class="nav-link active" data-scroll-target="#anova-análise-de-variância"><strong>ANOVA (Análise de Variância)</strong></a>
+  <ul class="collapse">
+  <li><a href="#anova---crescimento-micelial" id="toc-anova---crescimento-micelial" class="nav-link" data-scroll-target="#anova---crescimento-micelial">ANOVA - Crescimento Micelial</a>
+  <ul class="collapse">
+  <li><a href="#comparações-múltiplas-com-emmeans" id="toc-comparações-múltiplas-com-emmeans" class="nav-link" data-scroll-target="#comparações-múltiplas-com-emmeans">Comparações múltiplas com <code>emmeans</code></a></li>
+  </ul></li>
+  <li><a href="#anova-de-dados-não-paramétricos" id="toc-anova-de-dados-não-paramétricos" class="nav-link" data-scroll-target="#anova-de-dados-não-paramétricos"><strong>ANOVA de dados não-paramétricos</strong></a>
+  <ul class="collapse">
+  <li><a href="#abordagens-para-violação-de-pressupostos-na-anova" id="toc-abordagens-para-violação-de-pressupostos-na-anova" class="nav-link" data-scroll-target="#abordagens-para-violação-de-pressupostos-na-anova"><strong>Abordagens para Violação de Pressupostos na ANOVA</strong></a></li>
+  <li><a href="#importação-de-dados-1" id="toc-importação-de-dados-1" class="nav-link" data-scroll-target="#importação-de-dados-1">Importação de dados</a></li>
+  <li><a href="#visualização-de-dados" id="toc-visualização-de-dados" class="nav-link" data-scroll-target="#visualização-de-dados">Visualização de dados</a></li>
+  <li><a href="#alternativa-01-transformações-para-normalidade" id="toc-alternativa-01-transformações-para-normalidade" class="nav-link" data-scroll-target="#alternativa-01-transformações-para-normalidade">Alternativa 01: Transformações para normalidade</a></li>
+  <li><a href="#alternativa-02---testes-não-paramétricos-sprays" id="toc-alternativa-02---testes-não-paramétricos-sprays" class="nav-link" data-scroll-target="#alternativa-02---testes-não-paramétricos-sprays">Alternativa 02 - Testes Não Paramétricos (Sprays)</a></li>
+  <li><a href="#alternativa-03---glms" id="toc-alternativa-03---glms" class="nav-link" data-scroll-target="#alternativa-03---glms"><strong>Alternativa 03 - GLMs</strong></a></li>
+  </ul></li>
+  <li><a href="#anova-fatorial" id="toc-anova-fatorial" class="nav-link" data-scroll-target="#anova-fatorial">ANOVA fatorial</a>
+  <ul class="collapse">
+  <li><a href="#importação-dos-dados" id="toc-importação-dos-dados" class="nav-link" data-scroll-target="#importação-dos-dados">Importação dos dados</a></li>
+  <li><a href="#visualização-exploratória" id="toc-visualização-exploratória" class="nav-link" data-scroll-target="#visualização-exploratória">Visualização exploratória</a></li>
+  <li><a href="#ajuste-do-modelo-anova-fatorial" id="toc-ajuste-do-modelo-anova-fatorial" class="nav-link" data-scroll-target="#ajuste-do-modelo-anova-fatorial">Ajuste do modelo ANOVA fatorial</a></li>
+  <li><a href="#verificação-dos-pressupostos" id="toc-verificação-dos-pressupostos" class="nav-link" data-scroll-target="#verificação-dos-pressupostos">Verificação dos pressupostos</a></li>
+  <li><a href="#estimativa-das-médias-ajustadas" id="toc-estimativa-das-médias-ajustadas" class="nav-link" data-scroll-target="#estimativa-das-médias-ajustadas">Estimativa das médias ajustadas</a></li>
+  <li><a href="#comparações-múltiplas-com-agrupamento-por-letras" id="toc-comparações-múltiplas-com-agrupamento-por-letras" class="nav-link" data-scroll-target="#comparações-múltiplas-com-agrupamento-por-letras">Comparações múltiplas com agrupamento por letras</a></li>
+  <li><a href="#verificação-da-interação" id="toc-verificação-da-interação" class="nav-link" data-scroll-target="#verificação-da-interação">Verificação da interação</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 class="title display-7">anova</h1></header>
+
+<header id="title-block-header">
+
+
+</header>
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gsheet)        <span class="co"># Importa planilhas do Google Sheets</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)     <span class="co"># Manipulação de dados, ggplot2, dplyr, etc.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)       <span class="co"># Gráficos (pode vir via tidyverse)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)       <span class="co"># Médias ajustadas e comparações múltiplas (Tukey)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)      <span class="co"># Agrupamento de médias por letras (cld)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcompView)  <span class="co"># Suporte para cld com letras</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)           <span class="co"># Anova para modelos glm, testes</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)          <span class="co"># Box-Cox, transformações</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa)        <span class="co"># Diagnóstico visual de resíduos, modelos</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)       <span class="co"># Testes não paramétricos, Kruskal-Wallis, Levene</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agricolae)     <span class="co"># Comparações múltiplas não paramétricas</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)   <span class="co"># check_model para diagnóstico de modelos</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="anova-análise-de-variância" class="level1">
+<h1><strong>ANOVA (Análise de Variância)</strong></h1>
+<p>A Análise de Variância (ANOVA) é um teste estatístico paramétrico projetado para comparar as médias de <strong>três ou mais grupos independentes</strong>. Sua principal finalidade é determinar se existem diferenças estatisticamente significativas entre as médias populacionais desses grupos, analisando a partição da variabilidade total dos dados.</p>
+<section id="fundamentação-conceitual" class="level4">
+<h4 class="anchored" data-anchor-id="fundamentação-conceitual"><strong>Fundamentação Conceitual</strong></h4>
+<p>A lógica central da ANOVA reside na decomposição da variabilidade total dos dados em dois componentes:</p>
+<ol type="1">
+<li><p><strong>Variabilidade entre grupos:</strong> Diferenças atribuíveis aos tratamentos ou fatores estudados</p></li>
+<li><p><strong>Variabilidade intra-grupos:</strong> Variação inerente às unidades experimentais (erro aleatório)</p></li>
+</ol>
+<p>Se a variabilidade entre grupos for substancialmente maior que a variabilidade dentro dos grupos, temos evidências de que os tratamentos produzem efeitos diferenciados.</p>
+</section>
+<section id="formulação-de-hipóteses" class="level4">
+<h4 class="anchored" data-anchor-id="formulação-de-hipóteses"><strong>Formulação de Hipóteses</strong></h4>
+<ul>
+<li><p><strong>Hipótese nula (H₀):</strong> μ₁ = μ₂ = … = μₖ<br>
+<em>(Todas as médias populacionais dos k grupos são iguais)</em></p></li>
+<li><p><strong>Hipótese alternativa (Hₐ):</strong> Pelo menos um μᵢ ≠ μⱼ<br>
+<em>(Existe diferença significativa entre pelo menos um par de médias)</em></p>
+<h4 id="tipos-de-anova" class="anchored">Tipos de ANOVA</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"><strong>Tipo</strong></th>
+<th style="text-align: left;"><strong>Fatores</strong></th>
+<th style="text-align: left;"><strong>Objetivo Principal</strong></th>
+<th style="text-align: left;"><strong>Exemplo Aplicado</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>One-Way ANOVA</strong></td>
+<td style="text-align: left;">1 fator</td>
+<td style="text-align: left;">Testar efeito de um único fator categórico</td>
+<td style="text-align: left;">Comparar crescimento de plantas com 3 fertilizantes diferentes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Two-Way ANOVA</strong></td>
+<td style="text-align: left;">2 fatores</td>
+<td style="text-align: left;">Avaliar efeitos principais + interações</td>
+<td style="text-align: left;">Analisar rendimento agrícola por tipo de solo e regime de irrigação</td>
+</tr>
+</tbody>
+</table>
+<h4 id="pressupostos-essenciais" class="anchored"><strong>Pressupostos Essenciais</strong></h4>
+<p>Para validade dos resultados, a ANOVA exige:</p>
+<ol type="1">
+<li><p><strong>Independência:</strong> Observações não correlacionadas entre grupos</p></li>
+<li><p><strong>Normalidade:</strong> Distribuição aproximadamente normal dos resíduos</p></li>
+<li><p><strong>Homocedasticidade:</strong> Homogeneidade das variâncias entre grupos</p></li>
+</ol>
+<p>Quando esses pressupostos são violados, alternativas não-paramétricas como o teste de Kruskal-Wallis são recomendadas.</p></li>
+</ul>
+</section>
+<section id="anova---crescimento-micelial" class="level2">
+<h2 class="anchored" data-anchor-id="anova---crescimento-micelial">ANOVA - Crescimento Micelial</h2>
+<section id="importação-de-dados" class="level4">
+<h4 class="anchored" data-anchor-id="importação-de-dados">Importação de dados</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>micelial <span class="ot">&lt;-</span> <span class="fu">gsheet2tbl</span>(<span class="st">"https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=959387827#gid=959387827"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualização-dos-dados" class="level4">
+<h4 class="anchored" data-anchor-id="visualização-dos-dados">Visualização dos dados</h4>
+<ul>
+<li><code>ggplot</code> com <code>geom_boxplot()</code> e <code>geom_jitter()</code> visualiza <code>tcm</code> por <code>especie</code>;</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>micelial <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(especie, tcm)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>anova1 <span class="ot">&lt;-</span> <span class="fu">aov</span>(tcm <span class="sc">~</span> especie, <span class="at">data =</span> micelial)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>anova2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(tcm <span class="sc">~</span> especie, <span class="at">data =</span> micelial)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(anova1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: tcm
+          Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+especie    4 1.46958 0.36739  19.629 2.028e-07 ***
+Residuals 25 0.46792 0.01872                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(anova2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: tcm
+          Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+especie    4 1.46958 0.36739  19.629 2.028e-07 ***
+Residuals 25 0.46792 0.01872                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">residuals</span>(anova1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">residuals</span>(anova1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  residuals(anova1)
+W = 0.9821, p-value = 0.8782</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bartlett.test</span>(tcm <span class="sc">~</span> especie, <span class="at">data =</span> micelial)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Bartlett test of homogeneity of variances
+
+data:  tcm by especie
+Bartlett's K-squared = 4.4367, df = 4, p-value = 0.3501</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levene_test</span>(tcm <span class="sc">~</span> especie, <span class="at">data =</span> micelial)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+    df1   df2 statistic     p
+  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;
+1     4    25      1.76 0.169</code></pre>
+</div>
+</div>
+</section>
+<section id="ajuste-de-modelo-e-anova" class="level4">
+<h4 class="anchored" data-anchor-id="ajuste-de-modelo-e-anova">Ajuste de modelo e ANOVA</h4>
+<p>Para realizar uma análise de variância (ANOVA) com o conjunto de dados em questão, o primeiro passo é ajustar os dados a um modelo estatístico que relacione a variável resposta com a(s) variável(is) preditora(s). No exemplo, estamos interessados em avaliar se há diferença significativa nos valores de <strong>tcm</strong> (variável resposta) entre os diferentes níveis da variável <strong>especie</strong> (variável preditora).</p>
+<p>Para isso, utilizamos a função <code>aov()</code> para ajustar um modelo de ANOVA. Esse modelo assume que <strong>tcm</strong> varia em função dos grupos definidos por <strong>especie</strong>, permitindo testar se as médias de <strong>tcm</strong> diferem significativamente entre as espécies.</p>
+<p>Em paralelo, também utilizamos a função <code>lm()</code> (modelo linear) com a mesma fórmula.Embora <code>aov()</code> e <code>lm()</code> utilizem a mesma estrutura de modelo, <code>aov()</code> é uma forma especializada de análise de variância, enquanto <code>lm()</code> oferece um modelo linear mais geral. Ambas as abordagens podem ser submetidas à função <code>anova()</code> para gerar a tabela da análise de variância.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>anova1 <span class="ot">&lt;-</span> <span class="fu">aov</span>(tcm <span class="sc">~</span> especie, <span class="at">data =</span> micelial)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>anova2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(tcm <span class="sc">~</span> especie, <span class="at">data =</span> micelial)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(anova1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: tcm
+          Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+especie    4 1.46958 0.36739  19.629 2.028e-07 ***
+Residuals 25 0.46792 0.01872                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(anova2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: tcm
+          Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+especie    4 1.46958 0.36739  19.629 2.028e-07 ***
+Residuals 25 0.46792 0.01872                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>Para executar uma análise de variância com o conjunto de dados trabalhado, o primeiro passo é ajustar os dados em um modelo linear. Esse ajuste é realiza através da função <code>lm()</code>, no qual a fórmula <code>tcm ~ especie</code> especifica que tcm (a variável resposta) está sendo modelada em função de especie (a variável preditora).</p>
+<p>A tabela gerada apresenta os seguintes elementos:</p>
+<ul>
+<li><p><strong>Soma dos Quadrados (Sum Sq):</strong> Quantifica a variação explicada por cada componente do modelo (neste caso, a variação explicada por <strong>especie</strong> e o erro residual).</p></li>
+<li><p><strong>Graus de liberdade (Df):</strong> Número de parâmetros associados a cada componente da variação.</p></li>
+<li><p><strong>Quadrado médio (Mean Sq):</strong> Soma dos quadrados dividida pelos respectivos graus de liberdade.</p></li>
+<li><p><strong>Estatística F (F value):</strong> Razão entre o quadrado médio do fator e o quadrado médio do erro. Indica a força do efeito da variável preditora sobre a variável resposta.</p></li>
+<li><p><strong>Valor-p (Pr(&gt;F)):</strong> Indica se o efeito da variável preditora é estatisticamente significativo. Um valor-p menor que 0,05 geralmente sugere que há diferenças significativas entre os grupos de <strong>especie</strong>.</p></li>
+</ul>
+<pre><code>## Testes de comparação de médias
+
+As comparações post-hoc são necessárias quando a ANOVA global é significativa.</code></pre>
+</section>
+<section id="comparações-múltiplas-com-emmeans" class="level3">
+<h3 class="anchored" data-anchor-id="comparações-múltiplas-com-emmeans">Comparações múltiplas com <code>emmeans</code></h3>
+<p>Para identificar quais médias diferem significativamente entre si após a análise de variância, é necessário aplicar um teste de comparação múltipla, como o <strong>teste de Tukey</strong>. Esse método é amplamente utilizado por controlar o erro do Tipo I em situações de múltiplas comparações entre grupos, mantendo a confiabilidade dos resultados mesmo quando várias médias são comparadas simultaneamente.</p>
+<p>A implementação foi feita por meio da função <code>emmeans()</code> do pacote <strong>emmeans</strong>, que calcula as <strong>médias ajustadas</strong> (também chamadas de médias marginais) da variável resposta para cada nível da variável preditora (neste caso, as espécies). Essas médias são posteriormente comparadas usando:</p>
+<ul>
+<li><p>A função <code>pairs()</code>, que exibe as comparações par a par entre os grupos;</p></li>
+<li><p>A função <code>pwpm()</code>, que mostra uma matriz com os valores-p dessas comparações;</p></li>
+<li><p>E a função <code>cld()</code> (do pacote <strong>multcompView</strong>), que <strong>agrupa médias estatisticamente semelhantes com letras iguais</strong>, facilitando a interpretação dos resultados. O argumento <code>Letters = letters</code> permite customizar o estilo das letras usadas nos agrupamentos.</p></li>
+</ul>
+<p>Dessa forma, as letras atribuídas aos grupos indicam quais médias <strong>não diferem significativamente entre si</strong> a um nível de significância pré-definido (geralmente α = 0,05). Grupos com letras diferentes apresentam diferenças estatisticamente significativas nas médias da variável resposta.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(anova2, <span class="sc">~</span> especie)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> especie emmean     SE df lower.CL upper.CL
+ Fasi     1.572 0.0559 25    1.457     1.69
+ Faus     1.237 0.0559 25    1.122     1.35
+ Fcor     1.322 0.0559 25    1.207     1.44
+ Fgra     0.912 0.0559 25    0.797     1.03
+ Fmer     1.427 0.0559 25    1.312     1.54
+
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> especie emmean     SE df lower.CL upper.CL .group
+ Fgra     0.912 0.0559 25    0.797     1.03  1    
+ Faus     1.237 0.0559 25    1.122     1.35   2   
+ Fcor     1.322 0.0559 25    1.207     1.44   2   
+ Fmer     1.427 0.0559 25    1.312     1.54   23  
+ Fasi     1.572 0.0559 25    1.457     1.69    3  
+
+Confidence level used: 0.95 
+P value adjustment: tukey method for comparing a family of 5 estimates 
+significance level used: alpha = 0.05 
+NOTE: If two or more means share the same grouping symbol,
+      then we cannot show them to be different.
+      But we also did not show them to be the same. </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pwpm</span>(m)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        Fasi    Faus    Fcor    Fgra    Fmer
+Fasi [1.572]  0.0023  0.0302  &lt;.0001  0.3765
+Faus   0.335 [1.237]  0.8169  0.0031  0.1469
+Fcor   0.250  -0.085 [1.322]  0.0002  0.6761
+Fgra   0.660   0.325   0.410 [0.912]  &lt;.0001
+Fmer   0.145  -0.190  -0.105  -0.515 [1.427]
+
+Row and column labels: especie
+Upper triangle: P values   adjust = "tukey"
+Diagonal: [Estimates] (emmean) 
+Lower triangle: Comparisons (estimate)   earlier vs. later</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(m)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast    estimate    SE df t.ratio p.value
+ Fasi - Faus    0.335 0.079 25   4.241  0.0023
+ Fasi - Fcor    0.250 0.079 25   3.165  0.0302
+ Fasi - Fgra    0.660 0.079 25   8.356  &lt;.0001
+ Fasi - Fmer    0.145 0.079 25   1.836  0.3765
+ Faus - Fcor   -0.085 0.079 25  -1.076  0.8169
+ Faus - Fgra    0.325 0.079 25   4.115  0.0031
+ Faus - Fmer   -0.190 0.079 25  -2.405  0.1469
+ Fcor - Fgra    0.410 0.079 25   5.191  0.0002
+ Fcor - Fmer   -0.105 0.079 25  -1.329  0.6761
+ Fgra - Fmer   -0.515 0.079 25  -6.520  &lt;.0001
+
+P value adjustment: tukey method for comparing a family of 5 estimates </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="anova-de-dados-não-paramétricos" class="level2">
+<h2 class="anchored" data-anchor-id="anova-de-dados-não-paramétricos"><strong>ANOVA de dados não-paramétricos</strong></h2>
+<section id="abordagens-para-violação-de-pressupostos-na-anova" class="level3">
+<h3 class="anchored" data-anchor-id="abordagens-para-violação-de-pressupostos-na-anova"><strong>Abordagens para Violação de Pressupostos na ANOVA</strong></h3>
+<p>Quando os pressupostos fundamentais da ANOVA - <strong>normalidade dos resíduos</strong> e <strong>homogeneidade das variâncias (homocedasticidade)</strong> - não são atendidos, a validade dos resultados fica comprometida. Essa situação exige intervenções metodológicas específicas para garantir a robustez da análise. Existem três estratégias principais:</p>
+<section id="transformação-de-dados" class="level4">
+<h4 class="anchored" data-anchor-id="transformação-de-dados"><strong>1. Transformação de Dados</strong></h4>
+<p>A aplicação de funções matemáticas à variável resposta busca estabilizar variâncias e aproximar a distribuição da normalidade. A escolha da transformação depende do padrão observado nos resíduos:</p>
+<ul>
+<li><p><strong>Logarítmica (log(y))</strong> → Indicada para dados com assimetria positiva (cauda direita alongada)</p></li>
+<li><p><strong>Raiz quadrada (√y)</strong> → Adequada para dados de contagem (distribuição Poisson)</p></li>
+<li><p><strong>Inversa (1/y)</strong> → Eficaz quando a média e variância são proporcionalmente relacionadas</p></li>
+<li><p><strong>Box-Cox</strong> → Método paramétrico que identifica a transformação ótima via máxima verossimilhança</p></li>
+</ul>
+<p><strong>Limitação:</strong> Resultados devem ser interpretados na escala transformada, o que pode dificultar a compreensão substantiva.</p>
+</section>
+<section id="testes-não-paramétricos" class="level4">
+<h4 class="anchored" data-anchor-id="testes-não-paramétricos"><strong>2. Testes Não-Paramétricos</strong></h4>
+<p>Alternativas que não exigem distribuição normal nem homocedasticidade:</p>
+<ul>
+<li><p><strong>Kruskal-Wallis</strong> → ANOVA baseada em ranks (substituta direta da One-Way ANOVA)</p></li>
+<li><p><strong>Teste de Friedman</strong> → Versão para dados pareados/blocos aleatorizados</p></li>
+<li><p><strong>Métodos de comparação múltipla</strong> → Dunn, Conover-Iman ou Nemenyi (pós-hoc após Kruskal-Wallis)</p></li>
+</ul>
+<p><strong>Vantagem:</strong> Mantêm validade com distribuições assimétricas e outliers.</p>
+</section>
+<section id="modelos-lineares-generalizados-glm" class="level4">
+<h4 class="anchored" data-anchor-id="modelos-lineares-generalizados-glm"><strong>3. Modelos Lineares Generalizados (GLM)</strong></h4>
+<p>Abordagem mais sofisticada que estende a ANOVA tradicional:</p>
+<ul>
+<li><p><strong>Binomial</strong> → Para proporções (ex: taxa de germinação)</p></li>
+<li><p><strong>Poisson/Negative Binomial</strong> → Para dados de contagem (ex: número de insetos)</p></li>
+<li><p><strong>Gamma</strong> → Para dados contínuos assimétricos (ex: tempo de crescimento)</p>
+<p>Esta abordagem estratificada permite enfrentar violações de pressupostos com ferramentas estatísticas validadas, garantindo conclusões científicas robustas mesmo quando as condições ideais não são atendidas.</p></li>
+</ul>
+</section>
+</section>
+<section id="importação-de-dados-1" class="level3">
+<h3 class="anchored" data-anchor-id="importação-de-dados-1">Importação de dados</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>insetos <span class="ot">&lt;-</span> InsectSprays</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualização-de-dados" class="level3">
+<h3 class="anchored" data-anchor-id="visualização-de-dados">Visualização de dados</h3>
+<ul>
+<li><code>geom_boxplot()</code> + <code>geom_jitter()</code> mostram a variância entre os grupos.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>insetos <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(spray, count)) <span class="sc">+</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.color =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="ajuste-de-modelo-e-anova-1" class="level4">
+<h4 class="anchored" data-anchor-id="ajuste-de-modelo-e-anova-1">Ajuste de modelo e ANOVA</h4>
+<p>Para realizar a análise de variância, os dados foram ajustado ao modelo linear pela função <code>lm()</code> e foi executado a <code>anova()</code>.</p>
+<p>Transformações de dados (como raiz quadrada ou logarítmica) são estratégias para estabilizar variâncias e aproximar distribuições à normalidade. Após análise, os resultados devem ser interpretados na escala original usando <strong><code>type = "response"</code></strong> para manter a interpretabilidade biológica.</p>
+<ul>
+<li><code>bartlett.test()</code>, <code>shapiro.test()</code>, <code>qqnorm()</code> e <code>qqline()</code> avaliam os pressupostos da ANOVA.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>i2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(count <span class="sc">~</span> spray, <span class="at">data =</span> insetos)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(i2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: count
+          Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+spray      5 2668.8  533.77  34.702 &lt; 2.2e-16 ***
+Residuals 66 1015.2   15.38                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">residuals</span>(i2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bartlett.test</span>(count <span class="sc">~</span> spray, <span class="at">data =</span> insetos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Bartlett test of homogeneity of variances
+
+data:  count by spray
+Bartlett's K-squared = 25.96, df = 5, p-value = 9.085e-05</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">residuals</span>(i2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  residuals(i2)
+W = 0.96006, p-value = 0.02226</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(i2)); <span class="fu">qqline</span>(<span class="fu">residuals</span>(i2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>A ANOVA indicou que <strong>há diferenças significativas</strong> entre os grupos de <strong>spray</strong> (p &lt; 0,001), ou seja, pelo menos um grupo tem média diferente na contagem.</p>
+<p>No entanto, os <strong>pressupostos da ANOVA foram violados</strong>:</p>
+<ul>
+<li><p><strong>Bartlett:</strong> as variâncias entre os grupos <strong>não são homogêneas</strong> (p &lt; 0,001).</p></li>
+<li><p><strong>Shapiro-Wilk:</strong> os resíduos <strong>não seguem distribuição normal</strong> (p = 0,022).</p></li>
+</ul>
+<p>Dessa forma, o resultado da ANOVA pode estar comprometido.</p>
+</section>
+</section>
+<section id="alternativa-01-transformações-para-normalidade" class="level3">
+<h3 class="anchored" data-anchor-id="alternativa-01-transformações-para-normalidade">Alternativa 01: Transformações para normalidade</h3>
+<p>Como os pressupostos não foram atendidos devemos tentar transformar os dados para encontrar a normalidade:</p>
+<ul>
+<li><p><code>lm(sqrt(count) ~ spray)</code>: aplica transformação de raiz quadrada.</p></li>
+<li><p>Reanálise dos resíduos para avaliar melhoria.</p></li>
+<li><p><code>emmeans()</code> + <code>cld()</code> mostram comparações com médias transformadas, com <code>type = "response"</code> para interpretar no valor original.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">sqrt</span>(count) <span class="sc">~</span> spray, <span class="at">data =</span> insetos)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">residuals</span>(m3))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  residuals(m3)
+W = 0.98721, p-value = 0.6814</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(m3)); <span class="fu">qqline</span>(<span class="fu">residuals</span>(m3))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: sqrt(count)
+          Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+spray      5 88.438 17.6876  44.799 &lt; 2.2e-16 ***
+Residuals 66 26.058  0.3948                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>m33 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m3, <span class="sc">~</span> spray)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m33)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m33)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> spray emmean    SE df lower.CL upper.CL .group
+ C       1.24 0.181 66    0.883     1.61  1    
+ E       1.81 0.181 66    1.447     2.17  12   
+ D       2.16 0.181 66    1.802     2.53   2   
+ A       3.76 0.181 66    3.399     4.12    3  
+ B       3.88 0.181 66    3.514     4.24    3  
+ F       4.02 0.181 66    3.656     4.38    3  
+
+Results are given on the sqrt (not the response) scale. 
+Confidence level used: 0.95 
+Note: contrasts are still on the sqrt scale. Consider using
+      regrid() if you want contrasts of back-transformed estimates. 
+P value adjustment: tukey method for comparing a family of 6 estimates 
+significance level used: alpha = 0.05 
+NOTE: If two or more means share the same grouping symbol,
+      then we cannot show them to be different.
+      But we also did not show them to be the same. </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>m34 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m3, <span class="sc">~</span> spray, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m34)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-9-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(m34)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> spray response    SE df lower.CL upper.CL .group
+ C         1.55 0.452 66    0.779     2.58  1    
+ E         3.27 0.656 66    2.095     4.72  12   
+ D         4.68 0.785 66    3.248     6.38   2   
+ A        14.14 1.360 66   11.550    17.00    3  
+ B        15.03 1.410 66   12.352    17.97    3  
+ F        16.15 1.460 66   13.370    19.19    3  
+
+Confidence level used: 0.95 
+Intervals are back-transformed from the sqrt scale 
+Note: contrasts are still on the sqrt scale. Consider using
+      regrid() if you want contrasts of back-transformed estimates. 
+P value adjustment: tukey method for comparing a family of 6 estimates 
+significance level used: alpha = 0.05 
+NOTE: If two or more means share the same grouping symbol,
+      then we cannot show them to be different.
+      But we also did not show them to be the same. </code></pre>
+</div>
+</div>
+<p>Após aplicar a transformação por raiz quadrada na variável de contagem (<code>sqrt(count)</code>), os pressupostos da ANOVA foram atendidos, com os resíduos apresentando distribuição normal (teste de Shapiro-Wilk: p = 0,6814). A análise de variância indicou diferenças altamente significativas entre os tipos de spray (F = 44,80; p &lt; 0,001), confirmando que a eficácia dos sprays varia significativamente. As comparações múltiplas com o método de Tukey mostraram que o spray <strong>C</strong> apresentou a menor média de insetos (mais eficaz), enquanto os sprays <strong>A</strong>, <strong>B</strong> e <strong>F</strong> apresentaram as maiores médias (menos eficazes). Os sprays <strong>D</strong> e <strong>E</strong> ficaram em posição intermediária. As letras de agrupamento indicam que nem todos os grupos diferem entre si, mas o spray <strong>C</strong> se destaca como o mais eficiente no controle dos insetos.</p>
+<p>_________________________________________________________________________________<br>
+Quando os resíduos do modelo linear não seguem distribuição normal (verificado com <code>DHARMa</code> ou testes de normalidade), uma alternativa é realizar uma <strong>transformação Box-Cox</strong>, que busca uma potência (lambda) que melhore a normalidade dos dados, permitindo o uso de modelos lineares clássicos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Dados</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>insects <span class="ot">&lt;-</span> InsectSprays</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Ajustar o modelo linear</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(count <span class="sc">~</span> spray, <span class="at">data =</span> insects)</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Checar pressupostos com DHARMa (CORREÇÃO: passe o modelo 'm1', não os dados)</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>sim_res <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(<span class="at">fittedModel =</span> m1)  <span class="co"># Objeto do modelo aqui!</span></span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sim_res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Transformação Box-Cox (ajustada para evitar zeros)</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co"># - Adicionamos 0.1 aos dados para evitar valores zero/negativos</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">boxcox</span>(<span class="fu">lm</span>(insects<span class="sc">$</span>count <span class="sc">+</span> <span class="fl">0.1</span> <span class="sc">~</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> b<span class="sc">$</span>x[<span class="fu">which.max</span>(b<span class="sc">$</span>y)]</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Criar variáveis transformadas</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>insects <span class="ot">&lt;-</span> insects <span class="sc">|&gt;</span> </span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">count2 =</span> (count<span class="sc">^</span>lambda <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> lambda,  <span class="co"># Transformação Box-Cox</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">count3 =</span> <span class="fu">sqrt</span>(count)                   <span class="co"># Raiz quadrada (alternativa)</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(insects<span class="sc">$</span>count2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Se a transformação for eficaz (resíduos mais próximos da normalidade), você pode seguir com ANOVA tradicional com os dados transformados:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>m1_boxcox <span class="ot">&lt;-</span> <span class="fu">lm</span>(count2 <span class="sc">~</span> spray, <span class="at">data =</span> insects)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1_boxcox)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: count2
+          Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+spray      5 270.737  54.147  43.191 &lt; 2.2e-16 ***
+Residuals 66  82.742   1.254                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="alternativa-02---testes-não-paramétricos-sprays" class="level3">
+<h3 class="anchored" data-anchor-id="alternativa-02---testes-não-paramétricos-sprays">Alternativa 02 - Testes Não Paramétricos (Sprays)</h3>
+<p>Quando pressupostos da ANOVA não são atendidos:</p>
+<section id="rank-transformed-anova" class="level4">
+<h4 class="anchored" data-anchor-id="rank-transformed-anova">Rank-transformed ANOVA</h4>
+<p><code>lm(rank(count) ~ spray)</code>: aplica ANOVA aos ranks (ordens dos valores), menos sensível a distribuição dos dados.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>m5 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">rank</span>(count) <span class="sc">~</span> spray, <span class="at">data =</span> insetos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="teste-de-kruskal-wallis" class="level4">
+<h4 class="anchored" data-anchor-id="teste-de-kruskal-wallis">Teste de Kruskal-Wallis</h4>
+<p>O teste de Kruskal-Wallis é a alternativa não-paramétrica à ANOVA quando os pressupostos não são atendidos. Ele compara medianas em vez de médias, utilizando ranks dos dados. Requer significância global antes de realizar comparações pareadas, com métodos como Dunn ou Nemenyi que ajustam para múltiplas comparações.</p>
+<ul>
+<li><p><code>kruskal.test()</code> e <code>kruskal_test()</code> aplicam o teste de Kruskal-Wallis, alternativa não paramétrica à ANOVA.</p></li>
+<li><p><code>agricolae::kruskal()</code> realiza comparações múltiplas com letras como no <code>cld()</code>.</p></li>
+</ul>
+<p>Esse tipo de análise é ideal quando os dados são assimétricos, com outliers ou ordinalmente classificados.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(count <span class="sc">~</span> spray, <span class="at">data =</span> insetos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Kruskal-Wallis rank sum test
+
+data:  count by spray
+Kruskal-Wallis chi-squared = 54.691, df = 5, p-value = 1.511e-10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal_test</span>(insetos, count <span class="sc">~</span> spray)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  .y.       n statistic    df        p method        
+* &lt;chr&gt; &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;         
+1 count    72      54.7     5 1.51e-10 Kruskal-Wallis</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agricolae)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal</span>(insetos<span class="sc">$</span>count, insetos<span class="sc">$</span>spray, <span class="at">group =</span> <span class="cn">TRUE</span>, <span class="at">console =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Study: insetos$count ~ insetos$spray
+Kruskal-Wallis test's
+Ties or no Ties
+
+Critical Value: 54.69134
+Degrees of freedom: 5
+Pvalue Chisq  : 1.510845e-10 
+
+insetos$spray,  means of the ranks
+
+  insetos.count  r
+A      52.16667 12
+B      54.83333 12
+C      11.45833 12
+D      25.58333 12
+E      19.33333 12
+F      55.62500 12
+
+Post Hoc Analysis
+
+t-Student: 1.996564
+Alpha    : 0.05
+Minimum Significant Difference: 8.462804 
+
+Treatments with the same letter are not significantly different.
+
+  insetos$count groups
+F      55.62500      a
+B      54.83333      a
+A      52.16667      a
+D      25.58333      b
+E      19.33333     bc
+C      11.45833      c</code></pre>
+</div>
+</div>
+<p>Os resultados mostram que as duas análises são concordantes quanto ao resultado final da comparação de médias.</p>
+</section>
+</section>
+<section id="alternativa-03---glms" class="level3">
+<h3 class="anchored" data-anchor-id="alternativa-03---glms"><strong>Alternativa 03 - GLMs</strong></h3>
+<p>Modelos Lineares Generalizados (GLMs) são uma extensão dos modelos lineares tradicionais e são especialmente úteis quando os dados violam os pressupostos de normalidade dos resíduos exigidos pela ANOVA clássica. Isso é comum, por exemplo, quando a variável resposta representa contagens, proporções ou categorias.</p>
+<p>No caso do conjunto de dados analisado (<code>insetos</code>), a variável <code>count</code> representa uma <strong>contagem de insetos</strong>, o que justifica o uso de uma distribuição da <strong>família de Poisson</strong>, apropriada para esse tipo de variável. O ajuste do modelo é feito com a função <code>glm()</code>, usando o argumento <code>family = poisson</code>, como mostrado no código:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>m4 <span class="ot">&lt;-</span> <span class="fu">glm</span>(count <span class="sc">~</span> spray, <span class="at">data =</span> insetos, <span class="at">family =</span> poisson)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Após o ajuste, a análise de variância pode ser realizada com a função <code>Anova()</code> do pacote <code>car</code>, que retorna diretamente os valores-p (diferente da função base <code>anova()</code>, que mostra apenas os desvios):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Anova</span>(m4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table (Type II tests)
+
+Response: count
+      LR Chisq Df Pr(&gt;Chisq)    
+spray   310.71  5  &lt; 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>Para avaliar se o modelo GLM ajustado se comporta adequadamente, é possível inspecionar os resíduos simulados com a função <code>simulateResiduals()</code> do pacote <code>DHARMa</code>, que oferece diagnósticos visuais eficientes para GLMs:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">simulateResiduals</span>(m4))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Para comparar os efeitos dos diferentes tipos de spray, as médias ajustadas pelo modelo são calculadas com a função <code>emmeans()</code> (usando <code>type = "response"</code> para trazer os valores na escala original da contagem). Em seguida, a função <code>cld()</code> do pacote <code>multcomp</code> exibe as letras de agrupamento, indicando quais grupos diferem significativamente entre si com base no método de Tukey:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>medias_m4 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m4, <span class="sc">~</span> spray, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(medias_m4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> spray  rate    SE  df asymp.LCL asymp.UCL .group
+ C      2.08 0.417 Inf      1.41      3.08  1    
+ E      3.50 0.540 Inf      2.59      4.74  12   
+ D      4.92 0.640 Inf      3.81      6.35   2   
+ A     14.50 1.100 Inf     12.50     16.82    3  
+ B     15.33 1.130 Inf     13.27     17.72    3  
+ F     16.67 1.180 Inf     14.51     19.14    3  
+
+Confidence level used: 0.95 
+Intervals are back-transformed from the log scale 
+P value adjustment: tukey method for comparing a family of 6 estimates 
+Tests are performed on the log scale 
+significance level used: alpha = 0.05 
+NOTE: If two or more means share the same grouping symbol,
+      then we cannot show them to be different.
+      But we also did not show them to be the same. </code></pre>
+</div>
+</div>
+<p>Além disso, o código também utiliza a função <code>check_model()</code> do pacote <code>performance</code> para comparar visualmente a adequação dos diferentes modelos testados (<code>i2</code>, <code>m3</code>, <code>m4</code>). Essa análise visual é importante para validar os pressupostos dos modelos e justificar a escolha do modelo mais apropriado.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(i2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-18-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-18-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-18-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(i2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-18-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-18-6.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>O modelo com transformação <code>sqrt(count)</code> apresentou bom ajuste, com resíduos normalmente distribuídos, variância homogênea e ausência de pontos influentes, atendendo bem aos pressupostos de um modelo linear. Já o modelo GLM com família Poisson respeita a natureza de contagem da variável, mas apresentou sinais de superdispersão e violação da normalidade dos resíduos. Assim, a versão transformada parece mais adequada neste caso.</p>
+</section>
+</section>
+<section id="anova-fatorial" class="level2">
+<h2 class="anchored" data-anchor-id="anova-fatorial">ANOVA fatorial</h2>
+<p>Quando o conjunto de dados apresenta <strong>dois ou mais fatores explicativos (variáveis categóricas)</strong>, a análise adequada é a <strong>ANOVA fatorial</strong> (ou multifatorial). Esse tipo de análise permite:</p>
+<ul>
+<li><p>Avaliar o <strong>efeito principal</strong> de cada fator isoladamente (por exemplo, o efeito do tratamento independentemente da dose);</p></li>
+<li><p>Avaliar o <strong>efeito da interação</strong> entre os fatores (ou seja, se o efeito de um fator depende do nível do outro).</p></li>
+</ul>
+<p>A presença de interação é importante porque, nesse caso, os efeitos dos fatores <strong>não podem ser interpretados separadamente</strong>. Por exemplo, uma dose pode ter um efeito positivo com um tratamento, mas não com outro.</p>
+<p>A estrutura do modelo fatorial é expressa com <code>fator1 * fator2</code>, o que automaticamente inclui os efeitos principais (<code>fator1 + fator2</code>) e o efeito da interação (<code>fator1:fator2</code>).</p>
+<section id="importação-dos-dados" class="level3">
+<h3 class="anchored" data-anchor-id="importação-dos-dados">Importação dos dados</h3>
+<p>A análise começa com a importação dos dados diretamente de uma planilha do Google Sheets, usando a função <code>gsheet2tbl()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gsheet)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>antifungicos <span class="ot">&lt;-</span> <span class="fu">gsheet2tbl</span>(<span class="st">"https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=2023059672#gid=2023059672"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualização-exploratória" class="level3">
+<h3 class="anchored" data-anchor-id="visualização-exploratória">Visualização exploratória</h3>
+<p>Uma visualização inicial dos dados ajuda a entender como a variável resposta (<code>severity</code>) varia entre tratamentos e doses. Foi utilizado um gráfico com pontos dispersos (<code>geom_jitter()</code>) separados por <code>treat</code> (tratamento), com <code>dose</code> no eixo x.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>antifungicos <span class="sc">|&gt;</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="fu">factor</span>(dose), severity, <span class="at">colour =</span> <span class="fu">factor</span>(dose))) <span class="sc">+</span></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width=</span><span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> treat) <span class="sc">+</span></span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ajuste-do-modelo-anova-fatorial" class="level3">
+<h3 class="anchored" data-anchor-id="ajuste-do-modelo-anova-fatorial">Ajuste do modelo ANOVA fatorial</h3>
+<p>Aqui é ajustado um modelo linear com interação entre tratamento e dose. O operador <code>*</code> indica que serão considerados tanto os efeitos principais quanto a interação:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>m_anti <span class="ot">&lt;-</span> <span class="fu">lm</span>(severity <span class="sc">~</span> treat <span class="sc">*</span> dose, <span class="at">data =</span> antifungicos)</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m_anti)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: severity
+           Df   Sum Sq  Mean Sq F value    Pr(&gt;F)    
+treat       1 0.113232 0.113232  30.358 4.754e-05 ***
+dose        1 0.073683 0.073683  19.755 0.0004077 ***
+treat:dose  1 0.072739 0.072739  19.502 0.0004326 ***
+Residuals  16 0.059678 0.003730                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="verificação-dos-pressupostos" class="level3">
+<h3 class="anchored" data-anchor-id="verificação-dos-pressupostos">Verificação dos pressupostos</h3>
+<p>Utilizamos a função <code>simulate_residuals()</code> para avaliar visualmente os <strong>pressupostos da ANOVA</strong>, como normalidade dos resíduos e homogeneidade de variâncias.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">simulate_residuals</span>(m_anti))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="estimativa-das-médias-ajustadas" class="level3">
+<h3 class="anchored" data-anchor-id="estimativa-das-médias-ajustadas">Estimativa das médias ajustadas</h3>
+<p>A função <code>emmeans()</code> calcula as <strong>médias ajustadas</strong> (ou marginais) para cada nível de <code>treat</code> dentro de cada <code>dose</code>, e vice-versa. Isso facilita a comparação entre os grupos, considerando o modelo ajustado:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>media_anti <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m_anti, <span class="sc">~</span> treat <span class="sc">|</span> dose)</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>media_anti</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>dose = 0.5:
+ treat        emmean     SE df lower.CL upper.CL
+ Ionic liquid 0.2921 0.0273 16  0.23420   0.3500
+ Tebuconazole 0.0210 0.0273 16 -0.03690   0.0789
+
+dose = 2.0:
+ treat        emmean     SE df lower.CL upper.CL
+ Ionic liquid 0.0501 0.0273 16 -0.00781   0.1080
+ Tebuconazole 0.0202 0.0273 16 -0.03768   0.0781
+
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>media_anti2 <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m_anti, <span class="sc">~</span> dose <span class="sc">|</span> treat)</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>media_anti2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>treat = Ionic liquid:
+ dose emmean     SE df lower.CL upper.CL
+  0.5 0.2921 0.0273 16  0.23420   0.3500
+  2.0 0.0501 0.0273 16 -0.00781   0.1080
+
+treat = Tebuconazole:
+ dose emmean     SE df lower.CL upper.CL
+  0.5 0.0210 0.0273 16 -0.03690   0.0789
+  2.0 0.0202 0.0273 16 -0.03768   0.0781
+
+Confidence level used: 0.95 </code></pre>
+</div>
+</div>
+</section>
+<section id="comparações-múltiplas-com-agrupamento-por-letras" class="level3">
+<h3 class="anchored" data-anchor-id="comparações-múltiplas-com-agrupamento-por-letras">Comparações múltiplas com agrupamento por letras</h3>
+<p>Com a função <code>cld()</code>, é possível visualizar os grupos que são estatisticamente diferentes, representados por letras distintas. Grupos que compartilham a mesma letra <strong>não diferem significativamente</strong> entre si.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>media_anti2 <span class="ot">&lt;-</span>  <span class="fu">emmeans</span>(m_anti, <span class="sc">~</span> dose <span class="sc">|</span> treat)</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>media_anti2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>treat = Ionic liquid:
+ dose emmean     SE df lower.CL upper.CL
+  0.5 0.2921 0.0273 16  0.23420   0.3500
+  2.0 0.0501 0.0273 16 -0.00781   0.1080
+
+treat = Tebuconazole:
+ dose emmean     SE df lower.CL upper.CL
+  0.5 0.0210 0.0273 16 -0.03690   0.0789
+  2.0 0.0202 0.0273 16 -0.03768   0.0781
+
+Confidence level used: 0.95 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(media_anti)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>dose = 0.5:
+ treat        emmean     SE df lower.CL upper.CL .group
+ Tebuconazole 0.0210 0.0273 16 -0.03690   0.0789  1    
+ Ionic liquid 0.2921 0.0273 16  0.23420   0.3500   2   
+
+dose = 2.0:
+ treat        emmean     SE df lower.CL upper.CL .group
+ Tebuconazole 0.0202 0.0273 16 -0.03768   0.0781  1    
+ Ionic liquid 0.0501 0.0273 16 -0.00781   0.1080  1    
+
+Confidence level used: 0.95 
+significance level used: alpha = 0.05 
+NOTE: If two or more means share the same grouping symbol,
+      then we cannot show them to be different.
+      But we also did not show them to be the same. </code></pre>
+</div>
+</div>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>TRAT</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>LI</td>
+<td>29,2 aA</td>
+<td>5,0 Ab</td>
+</tr>
+<tr class="odd">
+<td>TEBU</td>
+<td>2,1 Ba</td>
+<td>2,0 Aa</td>
+</tr>
+<tr class="even">
+<td>CV = 63%</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="verificação-da-interação" class="level3">
+<h3 class="anchored" data-anchor-id="verificação-da-interação">Verificação da interação</h3>
+<p>O gráfico de interação gerado pela função <code>interaction.plot()</code> permite avaliar visualmente se há <strong>interação entre os fatores</strong>. Linhas paralelas indicam ausência de interação; linhas que se cruzam ou divergem indicam possível interação significativa.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interaction.plot</span>(antifungicos<span class="sc">$</span>dose, antifungicos<span class="sc">$</span>treat, antifungicos<span class="sc">$</span>severity)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="testes_de_comparação_multiplos_anova_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2025 – Abner Reurisson M. Palhares</p>
+</div>   
+    <div class="nav-footer-center">
+<p>FIP-606 - Análise de Dados</p>
+</div>
+    <div class="nav-footer-right">
+<p>Feito utilizando Quarto website</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

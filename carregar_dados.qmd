@@ -1,0 +1,212 @@
+---
+title: "Carregando dados e pacotes no ambiente R"
+---
+
+```{r}
+# Carregamento dos pacotes utilizados nesta aula
+library(tidyverse)   # Manipulação de dados, gráficos e funções do tipo pipe (%>%)
+library(readxl)      # Leitura de planilhas Excel (.xlsx)
+library(gsheet)      # Importação de planilhas do Google Sheets
+library(janitor)     # Tabelas de contingência e limpeza de nomes de colunas
+library(ggthemes)    # Temas adicionais para gráficos ggplot2
+library(patchwork)   # Combinação de múltiplos gráficos ggplot em uma única visualização
+```
+
+# Carregamento e Exploração de Dados no R
+
+Nesta aula, revisitamos o **workflow reprodutível** para importar, explorar e preparar conjuntos de dados no R. Abordaremos desde a configuração do ambiente até a combinação de gráficos, com exemplos práticos em **tidyverse**, **readxl**, **gsheet**, **janitor**, **ggplot2** e **patchwork**.
+
+------------------------------------------------------------------------
+
+## Configuração do Ambiente
+
+Antes de iniciar qualquer análise, precisamos garantir que todos os pacotes necessários estejam instalados e carregados no R. Esse passo assegura a reprodutibilidade do projeto e evita erros de carregamento durante a renderização do documento.
+
+```{r setup, include=FALSE}
+# Instale pacotes caso ainda não estejam disponíveis
+# install.packages(c("tidyverse", "readxl", "gsheet", "janitor", "ggthemes", "patchwork"))
+
+# Carregar pacotes principais
+library(tidyverse)   # Inclui dplyr, readr, ggplot2, etc.
+library(readxl)      # Para ler arquivos Excel (.xlsx)
+library(gsheet)     # Para importar planilhas do Google Sheets
+library(janitor)     # Para criar tabelas de contingência
+library(ggthemes)    # Temas adicionais para ggplot2
+library(patchwork)   # Combinação de múltiplos gráficos
+```
+
+------------------------------------------------------------------------
+
+## 1. Leitura de Arquivos Excel com `readxl`
+
+Para trabalhar com dados provenientes de planilhas do Excel, usamos o pacote **readxl**. Podemos ler uma ou várias abas, seja pelo nome ou pela posição, e em seguida inspecionar a estrutura dos dados.
+
+```{r}
+# Lê a primeira aba da planilha Excel
+dados <- read_excel("dados-diversos.xlsx")
+
+# Visualizar estrutura dos dados
+str(dados)
+glimpse(dados)
+```
+
+```{r}
+# Lê a aba "sensibilidade_fungicidas" pelo nome
+dados_sens <- read_excel(
+  path = "dados-diversos.xlsx",
+  sheet = "sensibilidade_fungicidas"
+)
+
+# Conferir estrutura e tipos
+str(dados_sens)
+glimpse(dados_sens)
+
+# Converter coluna dose para numérico (remove texto, converte)
+dados_sens <- dados_sens %>%
+  mutate(
+    dose = readr::parse_number(dose)
+  )
+```
+
+```{r}
+# Lê a terceira aba pelo índice (caso o nome mude)
+dados3 <- read_excel(
+  path = "dados-diversos.xlsx",
+  sheet = 3
+)
+
+# Exploração rápida
+str(dados3)
+glimpse(dados3)
+```
+
+------------------------------------------------------------------------
+
+## 2. Importação de Arquivos CSV com `readr`
+
+Arquivos CSV são frequentemente usados para intercâmbio de dados. Com **readr**, podemos importar e visualizar rapidamente esses arquivos. Caso não haja CSV neste momento, mantenha o chunk comentado para referência futura.
+
+```{r}
+# Caso tenha arquivos CSV, use read_csv
+# curve <- read_csv("curve.csv")
+# glimpse(curve)
+```
+
+------------------------------------------------------------------------
+
+## 3. Importação de Planilhas Online (Google Sheets)
+
+Para manter dados atualizados na nuvem, importamos planilhas do Google Sheets diretamente no R. Isso facilita a colaboração e atualizações em tempo real, sem precisar baixar manualmente arquivos.
+
+```{r}
+# Definir URL base da planilha
+gsheet_url <- "https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T"
+
+# Importa diferentes abas conforme o gid
+survey   <- gsheet2tbl(paste0(gsheet_url, "/edit?gid=1118819738"))
+datamg <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=983033137#gid=983033137")
+micelial <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1bq2N19DcZdtax2fQW9OHSGMR0X2__Z9T/edit?gid=959387827#gid=959387827")
+```
+
+------------------------------------------------------------------------
+
+## 4. Exploração de Dados com `dplyr` e `janitor`
+
+Depois de carregar os dados, realizamos verificações iniciais: contagens, agrupamentos, filtros e tabelas de contingência. Essas etapas ajudam a compreender a distribuição e possíveis inconsistências nos conjuntos.
+
+```{r}
+# Contagens simples (OBS: Diferente da aula, não rodou a aula)
+tab_state   <- survey |> count(state)
+tab_species <- survey  |> count(species)
+tab_residue <- survey |> count(residue)
+
+# Agrupamento múltiplo
+tab_multi <- survey |> 
+  group_by(state, residue, species)  |>
+  count()  |>
+  ungroup()
+
+# Filtros por estado
+RS <- survey |> filter(state == "RS")
+PR <- survey |> filter(state == "PR")
+
+# Combina RS e PR verticalmente
+combinado <- rbind (RS, PR)
+
+# Tabela de contingência (frequency table)
+survey  |>  tabyl(state, species)
+```
+
+------------------------------------------------------------------------
+
+## 5. Visualizações com `ggplot2`
+
+Visualizar dados é fundamental para identificar padrões e outliers. Usamos **ggplot2** para criar boxplots e dispersões, acrescentando temas que melhoram a comunicação visual.
+
+### 5.1. Boxplot: Efeito do Magnésio
+
+```{r}
+plot_mg <- datamg %>%
+  ggplot(aes(x = trat, y = comp)) +
+  geom_boxplot(fill = "darkorange", outlier.color = NA) +
+  geom_jitter(width = 0.1, color = "gray20") +
+  scale_y_continuous(limits = c(5, 20)) +
+  labs(
+    x = "Tratamento",
+    y = "Comprimento (mm)",
+    title = "Efeito do Magnésio",
+    subtitle = "Tamanho da lesão de mancha parda",
+    caption = "Fonte: F. A. Rodrigues et al. (2020)"
+  ) +
+  theme_clean()
+
+plot_mg
+```
+
+### 5.2. Boxplot: Crescimento Micelial
+
+```{r}
+plot_micelial <- micelial %>%
+  ggplot(aes(x = especie, y = tcm)) +
+  geom_boxplot(outlier.color = NA) +
+  geom_jitter(width = 0.1) +
+  coord_flip() +
+  labs(
+    x = NULL,
+    y = "Taxa de crescimento micelial"
+  ) +
+  theme_classic()
+
+plot_micelial
+```
+
+------------------------------------------------------------------------
+
+## 6. Combinação de Gráficos com `patchwork`
+
+Por fim, combinamos múltiplas visualizações para apresentações comparativas, adicionando anotações de painel e salvando em alta resolução.
+
+```{r}
+combo_plot <- plot_mg + plot_micelial +
+  plot_annotation(tag_levels = "A")
+
+# Exibe o layout combinado
+combo_plot
+
+# Salvar figura combinada em alta resolução
+ggsave(
+  filename = "combo_plot.png",
+  plot = combo_plot,
+  bg = "white",
+  width = 8,
+  height = 4
+)
+```
+
+------------------------------------------------------------------------
+
+**OBSERVAÇÕES:**
+
+-   Arquivos CSV devem estar no formato americano (ponto como separador decimal);
+
+-   Pode-se definir isso ao exportar do Excel ou configurar na leitura.

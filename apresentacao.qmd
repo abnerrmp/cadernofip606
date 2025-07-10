@@ -1,0 +1,28 @@
+---
+title: "apresentacao"
+---
+
+# Sobre o Autor
+
+Eu sou **Abner Reurisson de Medeiros Palhares**. Concluí minha graduação em Agronomia pela **Universidade Federal Rural do Semi-Árido (UFERSA)**, obtive meu mestrado em Fitopatologia pela **Universidade de Brasília (UnB)** e atualmente estou cursando doutorado em Fitopatologia na **Universidade Federal de Viçosa (UFV)**.
+
+# Objetivo do Site
+
+O principal objetivo deste site é **apresentar, de forma clara e organizada, as análises estatísticas e visualizações de dados** que foram abordadas na disciplina **FIP606 – Análise e Visualização de Dados em Fitopatologia**, sob orientação do Professor **Emerson M. Del Ponte**. Especificamente, o site busca:
+
+-   Demonstrar os **passos e métodos** de importação, limpeza e exploração de dados no **software R**;
+-   Exibir exemplos práticos de **análises estatísticas** aplicadas à Fitopatologia, como ANOVA, testes de hipótese e modelagem;
+-   Apresentar **visualizações gráficas** (mapas, gráficos de dispersão, boxplots) que auxiliam na interpretação dos resultados;
+-   Fornecer **códigos comentados** para facilitar o aprendizado e a reprodução dos procedimentos.
+
+# Recomendações de Leitura
+
+Para aprofundar seu conhecimento, recomendo fortemente a leitura dos seguintes recursos:
+
+-   📘 **R for Data Science** – <https://r4ds.hadley.nz>\
+-   📗 **The Art of Data Science** – <https://bookdown.org/rdpeng/artofdatascience/>\
+-   📙 **An Introduction to R** – <https://cran.r-project.org/manuals.html>
+
+> \[INSIRA UMA IMAGEM AQUI de capa de livro ou links de referência\]
+
+\*Este espaço será atualizado periodicamente com novos exemplos, tutoriais e aplicações práticas em Fitopatologia.\*\*

@@ -1,0 +1,28 @@
+/* css styles */
+/* Estilos para os links da navbar */
+.navbar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Tooltip para ícones do lado direito */
+.navbar-right a[href]::after {
+  content: attr(href);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+}
+
+.navbar-right a[href]:hover::after {
+  opacity: 1;
+}
